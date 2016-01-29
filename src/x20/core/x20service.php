@@ -1,8 +1,9 @@
 <?php
 
-namespace z20\core;
+namespace x20\core;
 
-use ReflectionFunction;
+use ReflectionClass;
+use Exception;
 
 /**
  * The z20Service class defines a service to register to z20 within modules.
@@ -13,22 +14,23 @@ use ReflectionFunction;
  * @copyright Copyright 2013-2015, Joshua L. Johnson
  * @license GPL2
  */
-class z20Service {
+class x20service {
+    
+    const FACTORY_CONSTRUCTOR = 'factory';
+    
+    const SINGLETON_CONSTRUCTOR = 'singleton';
 
     /**
-     * The unique ID of this particular service.
-     *
-     * @var string
+     * The ID of the service
      */
-    public $service_id;
+    public $serviceId;
 
     /**
-     * The type of service this particular service is. Example: 'singleton' or
-     * 'factory'
+     * A closure object that defines this particular service.
      *
-     * @var string
+     * @var callable
      */
-    public $service_type;
+    public $classDef;
 
     /**
      * The build type of this particular service. Currently, you have two
@@ -36,7 +38,7 @@ class z20Service {
      *
      * @var string
      */
-    public $build_type;
+    public $constructorType;
 
     /**
      * An array that stores the names of the variables defined in the $closure.
@@ -48,36 +50,40 @@ class z20Service {
     public $dependencies;
 
     /**
-     * A closure object that defines this particular service.
-     *
-     * @var callable
-     */
-    public $closure;
-
-    /**
-     * The constructor sets up the service object to be stored until z20
-     * determines that the service should be relocated into the z20
+     * The constructor sets up the service object to be stored until zx20
+     * determines that the service should be relocated into the x20
      * runtime environment.
      *
-     * @param string $service_id The unique ID of the service
-     * @param string $service_type The service type that defines how the
-     * service is to be used within z20.
-     * @param string $build_type The build type used to determine how z20
-     * should handle the creation practice.
-     * @param callable $closure The closure that defines the service.
+     * @param string $classDef The class you would like to wrap in an x20service.
+     * @param string $constructorType The type of constructor to use when you 
+     * instaniate the service.
      */
-    public function __construct($service_id, $service_type, $build_type, $closure) {
-        $this->service_id = $service_id;
-        $this->service_type = $service_type;
-        $this->build_type = $build_type;
-        $this->closure = new ReflectionFunction($closure);
+    public function __construct($classDef, $constructorType) {
+        $this->serviceId = $classDef;
+        $this->constructorType = $constructorType;
+        //make sure class exists
+        if (class_exists($classDef)) {
+            $this->classDef = new ReflectionClass($classDef);
+        } else {
+            throw new Error('Cannot find class ' . $classDef);
+        }
 
-        //use reflection to get dependencies then store them as property
-        $this->dependencies = array();
-        $parameters = $this->closure->getParameters();
-        if (!empty($parameters)) {
-            foreach ($parameters as $parameter) {
-                $this->dependencies[] = $parameter->getName();
+        //use reflection to get dependencies then store them
+        $this->dependencies = [];
+        $constructor = $this->classDef->getConstructor();
+        if ($constructor) {
+            $parameters = $constructor->getParameters();
+            if (!empty($parameters)) {
+                foreach ($parameters as $parameter) {
+                    $dependency = $parameter->getClass();
+                    if ($dependency) {
+                        $this->dependencies[] = $dependency;
+                    } else {
+                        $error = 'While trying to establish dependencies for class ' .'"' . $classDef . '", ' . 
+                        'x20 has found a parameter that has not hinted a class for parameter "$' . $parameter->getName() . '".';
+                        throw new Exception($error);
+                    }
+                }
             }
         }
     }

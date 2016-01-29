@@ -1,10 +1,10 @@
 <?php
 
 /**
- * @package z20
+ * @package x20
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
- * @copyright Copyright 2013-2016, Joshua L. Johnson
+ * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
 
