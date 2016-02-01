@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * @package x20
+ * @author Joshua L. Johnson <josh@ua1.us>
+ * @link http://labs.ua1.us
+ * @copyright Copyright 2016, Joshua L. Johnson
+ * @license MIT
+ */
+
 namespace x20\core;
 
 use x20\core\x20service;
@@ -7,14 +15,7 @@ use x20\core\x20service;
 /**
  * The x20module class is used to define a x20 module in x20.
  */
-class x20module {
-
-    /**
-     * The unique ID of this particular module
-     *
-     * @var string
-     */
-    public $id;
+abstract class x20module {
 
     /**
      * An array that contains the list of defined service objects.
@@ -22,65 +23,69 @@ class x20module {
      * @var array
      */
     public $services;
+    
+    /**
+     * An array that contains a list of modular dependencies
+     *
+     * @var array
+     */
+    public $modules;
 
     /**
      * The constructor that sets up the module object.
-     *
-     * @param string $module_id A unique ID that identifies this module.
      */
-    public function __construct($module_id) {
-        $this->id = $module_id;
+    public function __construct() {
         $this->services = [];
+        $this->modules = [];
+        $this->init();
     }
-
+    
     /**
-     * This method is used to define a service that runs when a module is loaded
-     * into the z20 runtime environment.
-     *
-     * @param callable $closure A closure that defines the service
-     * @return x20module
+     * This method is called when the module is first initialized. Use
+     * this method to define dependencies and services.
      */
-    public function init($closure) {
-        $this->services[$this->id . '_init'] = new z20Service($this->id . '_run', 'run', 'factory', $closure);
-        return $this;
-    }
-
+    public function init() {}
+    
     /**
-     * This method is used to define a service that runs when the z20::execute()
-     * is invoked. This service will only run if the module has been loaded into
-     * the z20 runtime environment.
-     *
-     * @param callable $closure A closure that defines the service
-     * @return z20Module
+     * This method is called when the x20::start() is executed.
      */
-    public function execute($closure) {
-        $this->services[$this->id . '_exec'] = new z20Service($this->id . '_exec', 'exec', 'factory', $closure);
-        return $this;
+    public function start() {}
+    
+    /**
+     * This method is called when x20::run() is executed.
+     */    
+    public function run() {}
+    
+    /**
+     * This method is used to register a module as a dependnecy to this module.
+     *
+     * @param string The module class
+     */
+    public function registerModule($className) {
+        $this->modules[] = $className;
     }
 
     /**
      * This method is used to define a service that returns a singleton instance
-     * of the service that was defined in the $closure.
+     * of the service that was defined.
      *
-     * @param string $singleton_id The name of the service you would like to register
-     * @param callable $closure A closure that defines the service
-     * @return z20Module
+     * @param string $className The name of the class you would like to register
+     * @return x20module
      */
-    public function singleton($singleton_id, $closure) {
-        $this->services[$singleton_id] = new z20Service($singleton_id, 'singleton', 'singleton', $closure);
+    public function registerSingleton($className) {
+        $this->services[$className] = new x20service($className, x20service::SINGLETON_CONSTRUCTOR);
         return $this;
     }
 
     /**
      * This method is used to define a service that returns a new instance
-     * of the service that was defined in the $closure everytime it is called.
+     * of the service that was defined everytime it is called.
      *
      * @param string $factory_id The name of the service you would like to register
-     * @param callable $closure A closure that defines the service
-     * @return z20Module
+     * @return x20module
      */
-    public function factory($factory_id, $closure) {
-        $this->services[$factory_id] = new z20Service($factory_id, 'factory', 'factory', $closure);
+    public function registerFactory($className) {
+        $this->services[$className] = new x20service($className, x20service::FACTORY_CONSTRUCTOR);
         return $this;
     }
 

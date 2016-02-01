@@ -1,23 +1,24 @@
 <?php
 
+/**
+ * @package x20
+ * @author Joshua L. Johnson <josh@ua1.us>
+ * @link http://labs.ua1.us
+ * @copyright Copyright 2016, Joshua L. Johnson
+ * @license MIT
+ */
+
 namespace x20\core;
 
 use ReflectionClass;
 use Exception;
 
 /**
- * The z20Service class defines a service to register to z20 within modules.
- *
- * @package z20
- * @link http://joshua.lylejohnson.us/z20
- * @author Joshua L. Johnson <joshua@lylejohnson.us>
- * @copyright Copyright 2013-2015, Joshua L. Johnson
- * @license GPL2
+ * The x20xervice class defines a service to register to x20 within modules.
  */
 class x20service {
     
     const FACTORY_CONSTRUCTOR = 'factory';
-    
     const SINGLETON_CONSTRUCTOR = 'singleton';
 
     /**
@@ -30,7 +31,7 @@ class x20service {
      *
      * @var callable
      */
-    public $classDef;
+    public $className;
 
     /**
      * The build type of this particular service. Currently, you have two
@@ -54,18 +55,18 @@ class x20service {
      * determines that the service should be relocated into the x20
      * runtime environment.
      *
-     * @param string $classDef The class you would like to wrap in an x20service.
+     * @param string $className The class you would like to wrap in an x20service.
      * @param string $constructorType The type of constructor to use when you 
      * instaniate the service.
      */
-    public function __construct($classDef, $constructorType) {
-        $this->serviceId = $classDef;
+    public function __construct($className, $constructorType) {
+        $this->serviceId = $className;
         $this->constructorType = $constructorType;
         //make sure class exists
-        if (class_exists($classDef)) {
-            $this->classDef = new ReflectionClass($classDef);
+        if (class_exists($className)) {
+            $this->classDef = new ReflectionClass($className);
         } else {
-            throw new Error('Cannot find class ' . $classDef);
+            throw new Error('Cannot find class "' . $className . '"');
         }
 
         //use reflection to get dependencies then store them
@@ -77,9 +78,9 @@ class x20service {
                 foreach ($parameters as $parameter) {
                     $dependency = $parameter->getClass();
                     if ($dependency) {
-                        $this->dependencies[] = $dependency;
+                        $this->dependencies[] = $dependency->getName();
                     } else {
-                        $error = 'While trying to establish dependencies for class ' .'"' . $classDef . '", ' . 
+                        $error = 'While trying to establish dependencies for class "' . $className . '", ' . 
                         'x20 has found a parameter that has not hinted a class for parameter "$' . $parameter->getName() . '".';
                         throw new Exception($error);
                     }

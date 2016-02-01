@@ -8,15 +8,16 @@
  * @license MIT
  */
 
-namespace z20\core;
+namespace x20\core;
+
+use stdClass;
 
 /**
  * The x20graph class makes it to easy to manage a dependency network
  * by allowing you to run dependency checks on all of the resources you have
  * available in your network.
  */
-class x20graph
-{
+class x20graph {
 
     /**
      * This array is filled with dependencies that have resolved during the
@@ -49,16 +50,18 @@ class x20graph
      * @var boolean
      */
     protected $_dependencyError;
+    
+    protected $_errorCodes;
 
     /**
      * The constructor
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->_resolved = [];
         $this->_unresolved = [];
         $this->_resourceGraph = [];
         $this->_dependencyError = false;
+        $this->_errorConfig();
     }
 
     /**
@@ -67,8 +70,7 @@ class x20graph
      * @param string $resourse_id A unique ID that identifies a resource
      * @return x20graph
      */
-    public function addResource($resourse_id)
-    {
+    public function addResource($resourse_id) {
         $this->_resourceGraph[$resourse_id] = [];
         return $this;
     }
@@ -81,8 +83,7 @@ class x20graph
      * are targeting.
      * @return boolean
      */
-    public function isResource($resource)
-    {
+    public function isResource($resource) {
         if (isset($this->_resourceGraph[$resource])) {
             return true;
         }
@@ -93,43 +94,40 @@ class x20graph
     /**
      * This method is used to add multiple dependencies to a resource.
      *
-     * @param string $resource_id A unique ID that repesents the resource you
+     * @param string $resourceId A unique ID that repesents the resource you
      * want to add dependencies to.
      * @param array $dependencies An array that contains the dependencies you want
      * to apply to the resource.
      * @return x20graph
      */
-    public function addDependencies($resource_id, array $dependencies)
-    {
-        $this->_resourceGraph[$resource_id] = array_merge($this->_resourceGraph[$resource_id], $dependencies);
+    public function addDependencies($resourceId, array $dependencies) {
+        $this->_resourceGraph[$resourceId] = array_merge($this->_resourceGraph[$resourceId], $dependencies);
         return $this;
     }
 
     /**
      * This method is used to add a single dependency to a resource.
      *
-     * @param string $resource_id A unique ID that repesents the resource you
+     * @param string $resourceId A unique ID that repesents the resource you
      * want to add dependency to.
      * @param string $dependency A var that contains the dependency you want
      * to apply to the resource.
      * @return dependencyGraph
      */
-    public function addDependency($resource_id, $dependency)
-    {
-        $this->_resourceGraph[$resource_id][] = $dependency;
+    public function addDependency($resourceId, $dependency) {
+        $this->_resourceGraph[$resourceId][] = $dependency;
         return $this;
     }
 
     /**
      * This method will return an array of the dependencies a resource has.
      *
-     * @param string $resource_id A unique ID of the resource you would like to
+     * @param string $resourceId A unique ID of the resource you would like to
      * get the dependencies of
      * @return array The dependencies of the resource.
      */
-    public function getDependencies($resource_id)
-    {
-        return $this->_resourceGraph[$resource_id];
+    public function getDependencies($resourceId) {
+        return $this->_resourceGraph[$resourceId];
     }
 
     /**
@@ -142,43 +140,14 @@ class x20graph
      * @param string $resource The unique ID of the resource you would like to
      * run the dependency check on.
      */
-    public function runDependencyCheck($resource_id)
-    {
-        if (!isset($this->_resourceGraph[$resource_id])) {
-            $this->_dependencyError = array(
-                'code' => 1,
-                'resource' => $resource_id
-            );
-        } else {
-            $this->_unresolved[$resource_id] = $resource_id;
-            foreach ($this->_resourceGraph[$resource_id] as $dependency) {
-                if (!in_array($dependency, $this->_resolved)) {
-                    if (in_array($dependency, $this->_unresolved)) {
-                        $this->_dependencyError = array(
-                            'code' => 2,
-                            'resource' => $resource_id
-                        );
-                    }
-                    if (!$this->_dependencyError) {
-                        $this->runDependencyCheck($dependency);
-                    }
-                }
-            }
-            unset($this->_unresolved[$resource_id]);
-            $this->_resolved[$resource_id] = $resource_id;
+    public function runDependencyCheck($resourceId) {
+        if ($resourceExistsError = $this->_runResourceExistsCheck($resourceId)) {
+            return $resourceExistsError;
         }
-    }
 
-    /**
-     * This method will return an array with error information if an error
-     * exists on the latest run dependency check.
-     *
-     * @return mixed Contains an error if one exists from the
-     * x20graph::runDependencyCheck() method.
-     */
-    public function getDependencyError()
-    {
-        return $this->_dependencyError;
+        if ($circularDepError = $this->_runCircularDependencyCheck($resourceId)) {
+            return $circularDepError;
+        }
     }
 
     /**
@@ -190,8 +159,7 @@ class x20graph
      * @return array This array will contain the order in which the dependencies
      * should be resolved in order to achieve proper dependency resolutions.
      */
-    public function getDependencyResolveOrder()
-    {
+    public function getDependencyResolveOrder() {
         return $this->_resolved;
     }
 
@@ -199,11 +167,54 @@ class x20graph
      * This method resets the status of all properies required to run another
      * dependency check.
      */
-    public function resetDepenencyCheck()
-    {
-        $this->_resolved = array();
-        $this->_unresolved = array();
-        $this->_dependencyError = false;
+    public function resetDepenencyCheck() {
+        $this->_resolved = [];
+        $this->_unresolved = [];
     }
-
+    
+    private function _errorConfig() {
+        //error code config
+        $error1 = new stdClass();
+        $error1->code = 1;
+        $error1->resourceId = false;
+        $error1->description = 'Resource Not Found';
+        $error2 = new stdClass();
+        $error2->code = 2;
+        $error2->resourceId = false;
+        $error2->description = 'Circular Dependency Detected';
+        $this->_errorCodes = [
+            1 => $error1,
+            2 => $error2
+        ];
+    }
+    
+    private function _getError($code, $resourceId = false) {
+        $error = $this->_errorCodes[$code];
+        $error->resourceId = $resourceId;
+        $this->resetDepenencyCheck();
+        return $error;
+    }
+    
+    private function _runResourceExistsCheck($resourceId) {
+        if (!$this->isResource($resourceId)) {
+            return $this->_getError(1, $resourceId);
+        }
+    }
+    
+    private function _runCircularDependencyCheck($resourceId) {
+        $this->_unresolved[$resourceId] = $resourceId;
+        foreach ($this->_resourceGraph[$resourceId] as $dependency) {
+            if (!in_array($dependency, $this->_resolved)) {
+                if (in_array($dependency, $this->_unresolved)) {
+                    return $this->_getError(2, $resourceId);
+                }
+                //return recursive error if any
+                if ($error = $this->runDependencyCheck($dependency)) {
+                    return $error;
+                }
+            }
+        }
+        unset($this->_unresolved[$resourceId]);
+        $this->_resolved[$resourceId] = $resourceId;
+    }
 }
