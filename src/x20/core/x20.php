@@ -110,11 +110,25 @@ class x20
     }
     
     public function getService($className) {
-        
+        $serviceDependencies = $this->_serviceDependencyErrorCheck($className);
+        if (empty($serviceDependencies)) {
+            return $this->_instanciateService($className, []);
+        } else {
+            $di = [];
+            foreach ($serviceDependencies as $dependency) {
+                //set $di[] with all dependencies and invoke
+                $di[] = $this->getService($dependency);
+            }
+
+            return $this->_instanciateService($className, $di);
+        }
     }
     
     public function isService($className) {
-        return ($this->_serviceModuleMap[$className]) ? true : false;
+        return (
+            isset($this->_serviceModuleMap[$className])
+            && !empty($this->_serviceModuleMap[$className])
+        ) ? true : false;
     }
     
     public function getModule($className) {
@@ -122,7 +136,10 @@ class x20
     }
 
     public function isModule($className) {
-        return ($this->_modules[$className]) ? true : false;
+        return (
+            isset($this->_modules[$className])
+            && !empty($this->_modules[$className])
+        ) ? true : false;
     }
     /**
      * This method is used to define modules and register services. If a module
@@ -225,34 +242,58 @@ class x20
                     throw new Exception($errorMsg);
                     break;
             }
+        } else {
+            $this->_moduleDependencyGraph->resetDepenencyCheck();
         }
+        
+        
         
     }
     
     private function _serviceDependencyErrorCheck($className) {
-        // //check to see if there are errors resolving dependencies
-        // if ($error = $this->_moduleDependencyGraph->runDependencyCheck($className)) {
-        //     switch ($error->code) {
-        //         case 1:
-        //             $errorMsg = 'While trying to resolve module "' . $className . '", '
-        //                 . 'x20 found that the module dependency "' . $error->resourceId . '" '
-        //                 . 'could not be found.';
-        //             throw new Exception($errorMsg);
-        //             break;
-        //         case 2:
-        //             $errorMsg = 'While trying to resolve module "' . $className . '", '
-        //                 . 'x20 found that there was a cirular dependency caused by the module '
-        //                 . '"' . $error->resourceId . '".';
-        //             throw new Exception($errorMsg);
-        //             break;
-        //     }
-        // }
+        if (!$this->isService($className)) {
+            $errorMsg = 'The service "' . $className . '" could not be found.';
+            throw new Exception($errorMsg);
+        }
+        //check to see if there are errors resolving dependencies
+        else if ($error = $this->_serviceDependencyGraph->runDependencyCheck($className)) {
+            switch ($error->code) {
+                case 1:
+                    $errorMsg = 'While trying to resolve service "' . $className . '", '
+                        . 'x20 found that the service dependency "' . $error->resourceId . '" '
+                        . 'could not be found.';
+                    throw new Exception($errorMsg);
+                    break;
+                case 2:
+                    $errorMsg = 'While trying to resolve service "' . $className . '", '
+                        . 'x20 found that there was a cirular dependency caused by the service '
+                        . '"' . $error->resourceId . '".';
+                    throw new Exception($errorMsg);
+                    break;
+            }
+        } else {
+            $resolveOrder = $this->_serviceDependencyGraph->getDependencyResolveOrder();
+            $this->_serviceDependencyGraph->resetDepenencyCheck();
+            return $resolveOrder;
+        }
     }
     
-    private function _invokeModuleMethodWithDependencies($className, $methodName) {
-        //get dependencies/ for each dependency inject it into di and call method
-    }
+    private function _instanciateService($className, $resolvedDependencies) {
+        $build_type = $this->getServiceBuildType($service_id);
+        switch ($build_type) {
+            case 'singleton':
+                if (!isset($this->singletonServices[$service_id])) {
+                    $dependantClosure = $this->factoryServices[$service_id];
+                    $this->singletonServices[$service_id] = $dependantClosure->invokeArgs($resolvedDependencies);
+                }
 
+                return $this->singletonServices[$service_id];
+            default:
+                $dependantClosure = $this->factoryServices[$service_id];
+
+                return $dependantClosure->invokeArgs($resolvedDependencies);
+        }
+    }
 
 //=========================================================================
 
@@ -462,7 +503,7 @@ class x20
      * @param array  $resolvedDependencies An array that contains all of
      *                                     a services dependencies resolved.
      */
-    private function _instanciateService($service_id, $resolvedDependencies)
+    private function _instanciatedService($service_id, $resolvedDependencies)
     {
         $build_type = $this->getServiceBuildType($service_id);
         switch ($build_type) {

@@ -8,7 +8,9 @@ use x20\core\x20;
 use x20\core\x20module;
 
 class dep1 {
-    
+    public function __construct(dep2 $dep2) {
+        var_dump($dep2);
+    }
 }
 
 class dep2 {
@@ -52,4 +54,4 @@ class myModule extends x20module {
 x20()->registerModule('myModule');
 x20()->start();
 x20()->run();
-x20()->get('testing\service\test');
+x20()->getService('dep1');
