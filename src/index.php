@@ -52,3 +52,4 @@ class myModule extends x20module {
 x20()->registerModule('myModule');
 x20()->start();
 x20()->run();
+x20()->get('testing\service\test');

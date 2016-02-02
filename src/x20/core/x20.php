@@ -116,6 +116,10 @@ class x20
     public function isService($className) {
         return ($this->_serviceModuleMap[$className]) ? true : false;
     }
+    
+    public function getModule($className) {
+        
+    }
 
     public function isModule($className) {
         return ($this->_modules[$className]) ? true : false;
@@ -245,7 +249,7 @@ class x20
         // }
     }
     
-    private function _invokeModuleMethod($className, $methodName) {
+    private function _invokeModuleMethodWithDependencies($className, $methodName) {
         //get dependencies/ for each dependency inject it into di and call method
     }
 
