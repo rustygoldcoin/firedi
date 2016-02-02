@@ -41,22 +41,6 @@ abstract class x20module {
     }
     
     /**
-     * This method is called when the module is first initialized. Use
-     * this method to define dependencies and services.
-     */
-    public function init() {}
-    
-    /**
-     * This method is called when the x20::start() is executed.
-     */
-    public function start() {}
-    
-    /**
-     * This method is called when x20::run() is executed.
-     */    
-    public function run() {}
-    
-    /**
      * This method is used to register a module as a dependnecy to this module.
      *
      * @param string The module class

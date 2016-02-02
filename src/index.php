@@ -15,14 +15,27 @@ class dep2 {
     
 }
 
+class dep3 {
+    
+}
+
 class abc extends x20module {
     public function init() {
         $this->registerModule('xyz');
     }
+    
+    public function start(dep3 $dp3) {
+        var_dump($dep3);
+        $this->loaded = true;
+    }
+    
+    public function run(dep3 $dep3) {
+        var_dump($dep3);
+    }
 }
 class xyz extends x20module {
     public function init() {
-        $this->registerModule('myModule');
+        $this->registerFactory('dep3');
     }
 }   
 
@@ -30,7 +43,6 @@ class myModule extends x20module {
     
     public function init() {
         $this->registerModule('abc');
-        $this->registerModule('xyz');
         $this->registerFactory('dep1');
         $this->registerSingleton('dep2');
     }

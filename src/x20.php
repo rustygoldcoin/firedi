@@ -20,5 +20,5 @@ require_once __DIR__ . '/x20/core/x20service.php';
  * @return x20
  */
 function x20() {
-    return x20\core\x20::get();
+    return x20\core\x20::getInstance();
 }
