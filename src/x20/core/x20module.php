@@ -10,6 +10,7 @@
 
 namespace x20\core;
 
+use x20\core\x20;
 use x20\core\x20service;
 
 /**
@@ -71,6 +72,10 @@ abstract class x20module {
     public function registerFactory($className) {
         $this->services[$className] = new x20service($className, x20service::FACTORY_CONSTRUCTOR);
         return $this;
+    }
+    
+    public function invoke($methodName) {
+        
     }
 
 }
