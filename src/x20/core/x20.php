@@ -109,18 +109,17 @@ class x20
         return self::$_x20;
     }
     
-    public function inject($className) {
+    public function getService($className) {
         
-    }
-    
-    public function isModule($className) {
-        return ($this->_modules[$className]) ? true : false;
     }
     
     public function isService($className) {
         return ($this->_serviceModuleMap[$className]) ? true : false;
     }
 
+    public function isModule($className) {
+        return ($this->_modules[$className]) ? true : false;
+    }
     /**
      * This method is used to define modules and register services. If a module
      * does not exist, it will create the new module using the moduleInterface
@@ -169,8 +168,6 @@ class x20
                 $this->_serviceModuleMap[$serviceClassName] = $moduleClassName;
             }
         }
-        //$this->_start();
-        //$this->_run();
     }
     
     public function run() {
@@ -225,6 +222,31 @@ class x20
                     break;
             }
         }
+        
+    }
+    
+    private function _serviceDependencyErrorCheck($className) {
+        // //check to see if there are errors resolving dependencies
+        // if ($error = $this->_moduleDependencyGraph->runDependencyCheck($className)) {
+        //     switch ($error->code) {
+        //         case 1:
+        //             $errorMsg = 'While trying to resolve module "' . $className . '", '
+        //                 . 'x20 found that the module dependency "' . $error->resourceId . '" '
+        //                 . 'could not be found.';
+        //             throw new Exception($errorMsg);
+        //             break;
+        //         case 2:
+        //             $errorMsg = 'While trying to resolve module "' . $className . '", '
+        //                 . 'x20 found that there was a cirular dependency caused by the module '
+        //                 . '"' . $error->resourceId . '".';
+        //             throw new Exception($errorMsg);
+        //             break;
+        //     }
+        // }
+    }
+    
+    private function _invokeModuleMethod($className, $methodName) {
+        //get dependencies/ for each dependency inject it into di and call method
     }
 
 
