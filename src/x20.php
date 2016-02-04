@@ -14,6 +14,8 @@ require_once __DIR__ . '/x20/core/x20graph.php';
 require_once __DIR__ . '/x20/core/x20module.php';
 require_once __DIR__ . '/x20/core/x20service.php';
 
+//bootstrap module x20 files
+require_once __DIR__ . '/x20/module/x20/x20.php';
 
 /**
  * Returns the x20 singleton
