@@ -66,7 +66,7 @@ class x20service {
         if (class_exists($className)) {
             $this->classDef = new ReflectionClass($className);
         } else {
-            throw new Error('Cannot find class "' . $className . '"');
+            throw new Exception('Cannot find class "' . $className . '"');
         }
 
         //use reflection to get dependencies then store them

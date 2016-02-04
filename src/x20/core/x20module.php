@@ -10,6 +10,7 @@
 
 namespace x20\core;
 
+use ReflectionClass;
 use x20\core\x20;
 use x20\core\x20service;
 
@@ -46,7 +47,7 @@ abstract class x20module {
      *
      * @param string The module class
      */
-    public function registerModule($className) {
+    public function dependsOn($className) {
         $this->modules[] = $className;
     }
 
@@ -75,7 +76,24 @@ abstract class x20module {
     }
     
     public function invoke($methodName) {
-        
+        if (method_exists($this, $methodName)) {
+            $reflect = new ReflectionClass($this);
+            $moduleMethod = $reflect->getMethod($methodName);
+            $parameters = $moduleMethod->getParameters();
+            if (!empty($parameters)) {
+                $di = [];
+                foreach ($parameters as $parameter) {
+                    $dependency = $parameter->getClass();
+                    if ($dependency) {
+                        $serviceClassName = $dependency->getName();
+                        $di[] = x20()->getService($serviceClassName);
+                    }
+                }
+                $moduleMethod->invokeArgs($this, $di);
+            } else {
+                $moduleMethod->invoke($this);
+            }
+        }
     }
 
 }

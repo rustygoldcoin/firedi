@@ -160,7 +160,9 @@ class x20graph {
      * should be resolved in order to achieve proper dependency resolutions.
      */
     public function getDependencyResolveOrder() {
-        return $this->_resolved;
+        $dependencies = $this->_resolved;
+        array_pop($dependencies);
+        return $dependencies;
     }
 
     /**
