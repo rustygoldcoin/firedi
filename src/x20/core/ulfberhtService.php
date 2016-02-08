@@ -1,22 +1,22 @@
 <?php
 
 /**
- * @package x20
+ * @package Ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
 
-namespace x20\core;
+namespace ulfberht\core;
 
 use ReflectionClass;
 use Exception;
 
 /**
- * The x20xervice class defines a service to register to x20 within modules.
+ * The ulfbertService class defines a service to register to ulfberht within modules.
  */
-class x20service {
+class ulfberhtService {
     
     const FACTORY_CONSTRUCTOR = 'factory';
     const SINGLETON_CONSTRUCTOR = 'singleton';
@@ -51,11 +51,11 @@ class x20service {
     public $dependencies;
 
     /**
-     * The constructor sets up the service object to be stored until zx20
-     * determines that the service should be relocated into the x20
+     * The constructor sets up the service object to be stored until zulfberht
+     * determines that the service should be relocated into the ulfberht
      * runtime environment.
      *
-     * @param string $className The class you would like to wrap in an x20service.
+     * @param string $className The class you would like to wrap in an ulfberhtservice.
      * @param string $constructorType The type of constructor to use when you 
      * instaniate the service.
      */
@@ -81,7 +81,7 @@ class x20service {
                         $this->dependencies[] = $dependency->getName();
                     } else {
                         $error = 'While trying to establish dependencies for class "' . $className . '", ' . 
-                        'x20 has found a parameter that has not hinted a class for parameter "$' . $parameter->getName() . '".';
+                        'ulfberht has found a parameter that has not hinted a class for parameter "$' . $parameter->getName() . '".';
                         throw new Exception($error);
                     }
                 }

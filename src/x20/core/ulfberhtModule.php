@@ -1,23 +1,23 @@
 <?php
 
 /**
- * @package x20
+ * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
 
-namespace x20\core;
+namespace ulfberht\core;
 
 use ReflectionClass;
-use x20\core\x20;
-use x20\core\x20service;
+use ulfberht\core\ulfberht;
+use ulfberht\core\ulfberhtService;
 
 /**
- * The x20module class is used to define a x20 module in x20.
+ * The ulfberhtmodule class is used to define a ulfberht module in ulfberht.
  */
-abstract class x20module {
+abstract class ulfberhtModule {
 
     /**
      * An array that contains the list of defined service objects.
@@ -56,10 +56,10 @@ abstract class x20module {
      * of the service that was defined.
      *
      * @param string $className The name of the class you would like to register
-     * @return x20module
+     * @return ulfberhtmodule
      */
     public function registerSingleton($className) {
-        $this->services[$className] = new x20service($className, x20service::SINGLETON_CONSTRUCTOR);
+        $this->services[$className] = new ulfberhtservice($className, ulfberhtservice::SINGLETON_CONSTRUCTOR);
         return $this;
     }
 
@@ -68,10 +68,10 @@ abstract class x20module {
      * of the service that was defined everytime it is called.
      *
      * @param string $factory_id The name of the service you would like to register
-     * @return x20module
+     * @return ulfberhtmodule
      */
     public function registerFactory($className) {
-        $this->services[$className] = new x20service($className, x20service::FACTORY_CONSTRUCTOR);
+        $this->services[$className] = new ulfberhtservice($className, ulfberhtservice::FACTORY_CONSTRUCTOR);
         return $this;
     }
     
@@ -86,7 +86,7 @@ abstract class x20module {
                     $dependency = $parameter->getClass();
                     if ($dependency) {
                         $serviceClassName = $dependency->getName();
-                        $di[] = x20()->getService($serviceClassName);
+                        $di[] = ulfberht()->getService($serviceClassName);
                     }
                 }
                 $moduleMethod->invokeArgs($this, $di);

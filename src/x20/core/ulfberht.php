@@ -1,29 +1,29 @@
 <?php
 
 /**
- * @package x20
+ * @package Ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
 
-namespace x20\core;
+namespace ulfberht\core;
 
 use Exception;
 use ReflectionClass;
-use x20\core\x20graph;
-use x20\core\x20module;
-use x20\core\x20service;
+use ulfberht\core\ulfberhtGraph;
+use ulfberht\core\ulfberhtModule;
+use ulfberht\core\ulfberhtService;
 
 /**
- * The x20 Class is what makes x20 possible. This class handles the
+ * The ulfberht Class is what makes ulfberht possible. This class handles the
  * entire Dependency Injection environment.
  */
-class x20
+class ulfberht
 {
 
-    private static $_x20;
+    private static $_ulfberht;
 
     private $_modules;
     
@@ -39,16 +39,16 @@ class x20
         $this->_modules = [];
         $this->_serviceModuleMap = [];
         $this->_serviceCache = [];
-        $this->_moduleDependencyGraph = new x20graph();
-        $this->_serviceDependencyGraph = new x20graph();
+        $this->_moduleDependencyGraph = new ulfberhtGraph();
+        $this->_serviceDependencyGraph = new ulfberhtGraph();
     }
 
     public static function getInstance() {
-        if (!isset(self::$_x20) || !(self::$_x20)) {
-            self::$_x20 = new self();
+        if (!isset(self::$_ulfberht) || !(self::$_ulfberht)) {
+            self::$_ulfberht = new self();
         }
 
-        return self::$_x20;
+        return self::$_ulfberht;
     }
     
     public function getService($className) {
@@ -84,7 +84,7 @@ class x20
         if (!isset($this->_modules[$className])) {
             $module = new $className();
             if (!$module instanceof x20module) {
-                throw new Exception('"' . $className . '" does not inherit from x20\core\x20module');
+                throw new Exception('"' . $className . '" does not inherit from ulfberht\core\ulfberhtModule');
             }
             //get module dependencies
             $dependencies = $module->modules;
@@ -132,7 +132,7 @@ class x20
     }
     
     public function destroy() {
-        self::$x20 = null;
+        self::$_ulfberht = null;
     }
     
     private function _resolveService($className) {
@@ -172,13 +172,13 @@ class x20
             switch ($error->code) {
                 case 1:
                     $errorMsg = 'While trying to resolve module "' . $className . '", '
-                        . 'x20 found that the module dependency "' . $error->resourceId . '" '
+                        . 'Ulfberht found that the module dependency "' . $error->resourceId . '" '
                         . 'could not be found.';
                     throw new Exception($errorMsg);
                     break;
                 case 2:
                     $errorMsg = 'While trying to resolve module "' . $className . '", '
-                        . 'x20 found that there was a cirular dependency caused by the module '
+                        . 'Ulfberht found that there was a cirular dependency caused by the module '
                         . '"' . $error->resourceId . '".';
                     throw new Exception($errorMsg);
                     break;
@@ -198,13 +198,13 @@ class x20
             switch ($error->code) {
                 case 1:
                     $errorMsg = 'While trying to resolve service "' . $className . '", '
-                        . 'x20 found that the service dependency "' . $error->resourceId . '" '
+                        . 'Ulfberht found that the service dependency "' . $error->resourceId . '" '
                         . 'could not be found.';
                     throw new Exception($errorMsg);
                     break;
                 case 2:
                     $errorMsg = 'While trying to resolve service "' . $className . '", '
-                        . 'x20 found that there was a cirular dependency caused by the service '
+                        . 'Ulfberht found that there was a cirular dependency caused by the service '
                         . '"' . $error->resourceId . '".';
                     throw new Exception($errorMsg);
                     break;

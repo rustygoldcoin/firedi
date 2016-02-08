@@ -1,27 +1,27 @@
 <?php
 
 /**
- * @package x20
+ * @package Ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
 
-namespace x20\core;
+namespace ulfberht\core;
 
 use stdClass;
 
 /**
- * The x20graph class makes it to easy to manage a dependency network
+ * The ulfberhtgraph class makes it to easy to manage a dependency network
  * by allowing you to run dependency checks on all of the resources you have
  * available in your network.
  */
-class x20graph {
+class ulfberhtGraph {
 
     /**
      * This array is filled with dependencies that have resolved during the
-     * mock dependency check that is done when you run x20graph::runDependencyCheck()
+     * mock dependency check that is done when you run ulfberhtgraph::runDependencyCheck()
      *
      * @var array
      */
@@ -29,7 +29,7 @@ class x20graph {
 
     /**
      * This array is filled with dependencies that have yet to be resolved during
-     * the mock dependency check that is done when you run x20graph::runDependencyCheck().
+     * the mock dependency check that is done when you run ulfberhtgraph::runDependencyCheck().
      *
      * @var array
      */
@@ -45,7 +45,7 @@ class x20graph {
 
     /**
      * This var is used to determine if an error had been produced during
-     * the mock dependency check when you run x20graph::runDependencyCheck().
+     * the mock dependency check when you run ulfberhtgraph::runDependencyCheck().
      *
      * @var boolean
      */
@@ -68,7 +68,7 @@ class x20graph {
      * This method is used to add a resource to the dependecy graph.
      *
      * @param string $resourse_id A unique ID that identifies a resource
-     * @return x20graph
+     * @return ulfberhtgraph
      */
     public function addResource($resourse_id) {
         $this->_resourceGraph[$resourse_id] = [];
@@ -98,7 +98,7 @@ class x20graph {
      * want to add dependencies to.
      * @param array $dependencies An array that contains the dependencies you want
      * to apply to the resource.
-     * @return x20graph
+     * @return ulfberhtgraph
      */
     public function addDependencies($resourceId, array $dependencies) {
         $this->_resourceGraph[$resourceId] = array_merge($this->_resourceGraph[$resourceId], $dependencies);

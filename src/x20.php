@@ -1,26 +1,26 @@
 <?php
 
 /**
- * @package x20
+ * @package Ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
 
-//bootstrap core x20 files
-require_once __DIR__ . '/x20/core/x20.php';
-require_once __DIR__ . '/x20/core/x20graph.php';
-require_once __DIR__ . '/x20/core/x20module.php';
-require_once __DIR__ . '/x20/core/x20service.php';
+//bootstrap core ulfberht files
+require_once __DIR__ . '/ulfberht/core/ulfberht.php';
+require_once __DIR__ . '/ulfberht/core/ulfberhtGraph.php';
+require_once __DIR__ . '/ulfberht/core/ulfberhtModule.php';
+require_once __DIR__ . '/ulfberht/core/ulfberhtService.php';
 
 //bootstrap module x20 files
-require_once __DIR__ . '/x20/module/x20/x20.php';
+require_once __DIR__ . '/ulfberht/module/ulfberht/ulfberht.php';
 
 /**
  * Returns the x20 singleton
  * @return x20
  */
-function x20() {
-    return x20\core\x20::getInstance();
+function ulfberht() {
+    return ulfberht\core\ulfberht::getInstance();
 }
