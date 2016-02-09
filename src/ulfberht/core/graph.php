@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package Ulfberht
+ * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
@@ -17,7 +17,7 @@ use stdClass;
  * by allowing you to run dependency checks on all of the resources you have
  * available in your network.
  */
-class ulfberhtGraph {
+class graph {
 
     /**
      * This array is filled with dependencies that have resolved during the

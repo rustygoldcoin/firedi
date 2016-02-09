@@ -1,9 +1,16 @@
 <?php
-namespace x20\module\x20\service;
 
-use x20\core\x20service;
+/**
+ * @package ulfberht
+ * @author Joshua L. Johnson <josh@ua1.us>
+ * @link http://labs.ua1.us
+ * @copyright Copyright 2016, Joshua L. Johnson
+ * @license MIT
+ */
+ 
+namespace ulfberht\module\ulfberht;
 
-class config extends x20service {
+class config {
     
     private $_config;
     

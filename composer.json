@@ -1,9 +1,9 @@
 {
-    "name": "ua1-labs/x20",
-    "description": "x20 is a powerful and light weight service based Dependency Injection framework. Now built with MVC.",
+    "name": "ua1-labs/ulfberht",
+    "description": "Ulfberht is a powerful and light weight service based Dependency Injection framework. Now built with MVC.",
     "type": "library",
     "keywords": [
-        "x20",
+        "ulfberht",
         "Dependency Injection",
         "MVC"
     ],
@@ -17,7 +17,7 @@
     },
     "autoload": {
         "files": [
-            "src/z20.php"
+            "src/ulfberht"
         ]
     }
 }

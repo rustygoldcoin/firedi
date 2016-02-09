@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package Ulfberht
+ * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
@@ -10,16 +10,16 @@
 
 //bootstrap core ulfberht files
 require_once __DIR__ . '/ulfberht/core/ulfberht.php';
-require_once __DIR__ . '/ulfberht/core/ulfberhtGraph.php';
-require_once __DIR__ . '/ulfberht/core/ulfberhtModule.php';
-require_once __DIR__ . '/ulfberht/core/ulfberhtService.php';
+require_once __DIR__ . '/ulfberht/core/graph.php';
+require_once __DIR__ . '/ulfberht/core/module.php';
+require_once __DIR__ . '/ulfberht/core/service.php';
 
-//bootstrap module x20 files
+//bootstrap module ulfberht files
 require_once __DIR__ . '/ulfberht/module/ulfberht/ulfberht.php';
 
 /**
- * Returns the x20 singleton
- * @return x20
+ * Returns the ulfberht singleton
+ * @return ulfberht
  */
 function ulfberht() {
     return ulfberht\core\ulfberht::getInstance();

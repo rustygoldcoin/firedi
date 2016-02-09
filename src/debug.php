@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package Ulfberht
+ * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package Ulfberht
+ * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
@@ -16,7 +16,7 @@ use Exception;
 /**
  * The ulfbertService class defines a service to register to ulfberht within modules.
  */
-class ulfberhtService {
+class service {
     
     const FACTORY_CONSTRUCTOR = 'factory';
     const SINGLETON_CONSTRUCTOR = 'singleton';
@@ -35,7 +35,7 @@ class ulfberhtService {
 
     /**
      * The build type of this particular service. Currently, you have two
-     * build types that is supported by z20. A 'singleton' and a 'factory'
+     * build types that is supported by ulfberht. A 'singleton' and a 'factory'
      *
      * @var string
      */

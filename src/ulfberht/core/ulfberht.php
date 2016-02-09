@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package Ulfberht
+ * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
  * @link http://labs.ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
@@ -12,9 +12,9 @@ namespace ulfberht\core;
 
 use Exception;
 use ReflectionClass;
-use ulfberht\core\ulfberhtGraph;
-use ulfberht\core\ulfberhtModule;
-use ulfberht\core\ulfberhtService;
+use ulfberht\core\graph;
+use ulfberht\core\module;
+use ulfberht\core\service;
 
 /**
  * The ulfberht Class is what makes ulfberht possible. This class handles the
@@ -39,8 +39,8 @@ class ulfberht
         $this->_modules = [];
         $this->_serviceModuleMap = [];
         $this->_serviceCache = [];
-        $this->_moduleDependencyGraph = new ulfberhtGraph();
-        $this->_serviceDependencyGraph = new ulfberhtGraph();
+        $this->_moduleDependencyGraph = new graph();
+        $this->_serviceDependencyGraph = new graph();
     }
 
     public static function getInstance() {
@@ -83,7 +83,7 @@ class ulfberht
         //if module object doesn't exists attempt to create it first and register dependencies
         if (!isset($this->_modules[$className])) {
             $module = new $className();
-            if (!$module instanceof x20module) {
+            if (!$module instanceof module) {
                 throw new Exception('"' . $className . '" does not inherit from ulfberht\core\ulfberhtModule');
             }
             //get module dependencies
@@ -154,13 +154,13 @@ class ulfberht
         $module = $this->getModule($serviceModule);
         $service = $module->services[$className];
         switch ($service->constructorType) {
-            case (x20service::SINGLETON_CONSTRUCTOR):
+            case (service::SINGLETON_CONSTRUCTOR):
                 if (!isset($this->_serviceCache[$className])) {
                     $classDef = $service->classDef;
                     $this->_serviceCache[$className] = $classDef->newInstanceArgs($resolvedDependencies);
                 }
                 return $this->_serviceCache[$className];
-            case (x20service::FACTORY_CONSTRUCTOR):
+            case (service::FACTORY_CONSTRUCTOR):
                 $classDef = $service->classDef;
                 return $classDef->newInstanceArgs($resolvedDependencies);
         }

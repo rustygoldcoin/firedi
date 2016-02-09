@@ -12,35 +12,26 @@ namespace ulfberht\core;
 
 use ReflectionClass;
 use ulfberht\core\ulfberht;
-use ulfberht\core\ulfberhtService;
+use ulfberht\core\service;
 
 /**
  * The ulfberhtmodule class is used to define a ulfberht module in ulfberht.
  */
-abstract class ulfberhtModule {
+abstract class module {
 
     /**
      * An array that contains the list of defined service objects.
      *
      * @var array
      */
-    public $services;
+    public $services = [];
     
     /**
      * An array that contains a list of modular dependencies
      *
      * @var array
      */
-    public $modules;
-
-    /**
-     * The constructor that sets up the module object.
-     */
-    public function __construct() {
-        $this->services = [];
-        $this->modules = [];
-        $this->init();
-    }
+    public $modules = [];
     
     /**
      * This method is used to register a module as a dependnecy to this module.
@@ -59,8 +50,8 @@ abstract class ulfberhtModule {
      * @return ulfberhtmodule
      */
     public function registerSingleton($className) {
-        $this->services[$className] = new ulfberhtservice($className, ulfberhtservice::SINGLETON_CONSTRUCTOR);
-        return $this;
+        $this->services[$className] = new service($className, service::SINGLETON_CONSTRUCTOR);
+            return $this;
     }
 
     /**
@@ -71,7 +62,7 @@ abstract class ulfberhtModule {
      * @return ulfberhtmodule
      */
     public function registerFactory($className) {
-        $this->services[$className] = new ulfberhtservice($className, ulfberhtservice::FACTORY_CONSTRUCTOR);
+        $this->services[$className] = new service($className, service::FACTORY_CONSTRUCTOR);
         return $this;
     }
     
