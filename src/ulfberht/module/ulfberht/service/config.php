@@ -19,11 +19,11 @@ class config {
     }
     
     public function set($key, $config) {
-        $this->config[$key] = $config;
+        $this->_config[$key] = $config;
     }
     
     public function get($key) {
-        return $this->config[$key];
+        return $this->_config[$key];
     }
     
 }

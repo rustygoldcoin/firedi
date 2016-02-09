@@ -16,10 +16,16 @@ class myModule extends module {
     
     public function run(config $conf) {
         var_dump($conf->get('add'));
+        $conf->loaded=true;
+    }
+    
+    public function myRun(config $conf) {
+        var_dump($conf);
     }
     
 }
 
 ulfberht()->registerModule('myModule');
 ulfberht()->start();
+ulfberht()->getModule('myModule')->invoke('myRun');
 ulfberht()->run();
