@@ -5,6 +5,7 @@ require_once __DIR__ . '/src/debug.php';
 
 use ulfberht\core\module;
 use ulfberht\module\ulfberht\config;
+use ulfberht\module\ulfberht\router;
 
 
 class myModule extends module {
@@ -19,8 +20,9 @@ class myModule extends module {
         $conf->loaded=true;
     }
     
-    public function myRun(config $conf) {
+    public function myRun(config $conf, router $router) {
         var_dump($conf);
+        var_dump($router);
     }
     
 }

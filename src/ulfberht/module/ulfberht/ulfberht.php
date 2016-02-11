@@ -17,10 +17,12 @@ class ulfberht extends module {
     public function __construct() {
         //register config service
         $this->registerSingleton('ulfberht\module\ulfberht\config');
+        $this->registerSingleton('ulfberht\module\ulfberht\router');
     }
     
 }
 
 //include clas definitions and register module
 require_once __DIR__ . '/service/config.php';
+require_once __DIR__ . '/service/router.php';
 ulfberht()->registerModule('ulfberht\module\ulfberht');
