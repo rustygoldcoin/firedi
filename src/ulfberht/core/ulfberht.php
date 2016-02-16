@@ -26,7 +26,7 @@ class ulfberht
     private static $_ulfberht;
 
     private $_modules;
-    
+
     private $_serviceModuleMap;
 
     private $_serviceCache;
@@ -50,18 +50,18 @@ class ulfberht
 
         return self::$_ulfberht;
     }
-    
+
     public function getService($className) {
         return $this->_resolveService($className);
     }
-    
+
     public function isService($className) {
         return (
             isset($this->_serviceModuleMap[$className])
             && !empty($this->_serviceModuleMap[$className])
         ) ? true : false;
     }
-    
+
     public function getModule($className) {
         if ($this->isModule($className)) {
             return $this->_modules[$className];
@@ -94,15 +94,15 @@ class ulfberht
             $this->_moduleDependencyGraph->addDependencies($className, $dependencies);
             //set put module into module map
             $this->_modules[$className] = $module;
-            
+
             //register dependencent modules
             foreach ($dependencies as $dependency) {
                 $this->registerModule($dependency);
             }
         }
     }
-   
-    public function start() {
+
+    public function go() {
         //resolve all services
         foreach ($this->_modules as $moduleClassName => $module) {
             //run module dependency check for errors
@@ -121,20 +121,18 @@ class ulfberht
         }
         //run each module's start method
         foreach ($this->_modules as $moduleClassName => $module) {
-            $module->invoke('start');
+            $module->invoke('config');
         }
-    }
-    
-    public function run() {
+        //run each module's run method
         foreach ($this->_modules as $moduleClassName => $module) {
             $module->invoke('run');
         }
     }
-    
+
     public function destroy() {
         self::$_ulfberht = null;
     }
-    
+
     private function _resolveService($className) {
         $serviceDependencies = $this->_serviceDependencyErrorCheck($className);
         if (empty($serviceDependencies)) {
@@ -148,7 +146,7 @@ class ulfberht
             return $this->_instanciateService($className, $di);
         }
     }
-    
+
     private function _instanciateService($className, $resolvedDependencies) {
         $serviceModule = $this->_serviceModuleMap[$className];
         $module = $this->getModule($serviceModule);
@@ -165,7 +163,7 @@ class ulfberht
                 return $classDef->newInstanceArgs($resolvedDependencies);
         }
     }
-    
+
     private function _moduleDependencyErrorCheck($className) {
         //check to see if there are errors resolving dependencies
         if ($error = $this->_moduleDependencyGraph->runDependencyCheck($className)) {
@@ -187,7 +185,7 @@ class ulfberht
             $this->_moduleDependencyGraph->resetDepenencyCheck();
         }
     }
-    
+
     private function _serviceDependencyErrorCheck($className) {
         if (!$this->isService($className)) {
             $errorMsg = 'The service "' . $className . '" could not be found.';

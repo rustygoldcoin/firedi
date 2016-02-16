@@ -10,16 +10,33 @@
 
 namespace ulfberht\module;
 
+use Exception;
 use ulfberht\core\module;
+use ulfberht\module\ulfberht\router;
 
 class ulfberht extends module {
-    
+
     public function __construct() {
         //register config service
         $this->registerSingleton('ulfberht\module\ulfberht\config');
         $this->registerSingleton('ulfberht\module\ulfberht\router');
     }
-    
+
+    public function mvc(router $router) {
+        $controllerActionSetting = explode(':', $router->resolveRoute());
+        $controllerClass = $controllerActionSetting[0];
+        $controllerAction = (isset($controllerActionSetting[1])) ? $controllerActionSetting[1] : false;
+        if (!$controllerClass) {
+            throw new Exception('Could not find a controller to resolve.');
+        }
+        if (!ulfberht()->isService($controllerClass)) {
+            throw new Exception('Could not find controller "' . $controllerClass . '"');
+        }
+
+        $controller = ulfberht()->getService($controllerClass);
+
+    }
+
 }
 
 //include clas definitions and register module

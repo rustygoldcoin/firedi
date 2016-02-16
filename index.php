@@ -7,27 +7,31 @@ use ulfberht\core\module;
 use ulfberht\module\ulfberht\config;
 use ulfberht\module\ulfberht\router;
 
+class abc {
+    public function __construct(router $router) {
+        var_dump($router->getRouteVars());
+    }
+}
 
 class myModule extends module {
-    
-    public function start(config $conf) {
-        var_dump($conf);
-        $conf->set('add', 'true');
+
+    public function __construct() {
+        $this->registerSingleton('abc');
     }
-    
-    public function run(config $conf) {
-        var_dump($conf->get('add'));
-        $conf->loaded=true;
+
+    public function config(router $a) {
+        $a->when('/hello/:name', 'abc:action');
+        $a->otherwise('xyz');
     }
-    
-    public function myRun(config $conf, router $router) {
-        var_dump($conf);
-        var_dump($router);
+
+    public function run(router $a) {
+        var_dump($a->resolveRoute());
+        var_dump($a->getRouteVars('name'));
+        var_dump($a->getCurrentRoute());
+        var_dump($a->getMatchedRoute());
     }
-    
 }
 
 ulfberht()->registerModule('myModule');
-ulfberht()->start();
-ulfberht()->getModule('myModule')->invoke('myRun');
-ulfberht()->run();
+ulfberht()->go();
+ulfberht()->getModule('ulfberht\module\ulfberht')->invoke('mvc');
