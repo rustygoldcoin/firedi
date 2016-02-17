@@ -8,15 +8,6 @@
  * @license MIT
  */
 
-//bootstrap core ulfberht files
-require_once __DIR__ . '/ulfberht/core/ulfberht.php';
-require_once __DIR__ . '/ulfberht/core/graph.php';
-require_once __DIR__ . '/ulfberht/core/module.php';
-require_once __DIR__ . '/ulfberht/core/service.php';
-
-//bootstrap module ulfberht files
-require_once __DIR__ . '/ulfberht/module/ulfberht/ulfberht.php';
-
 /**
  * Returns the ulfberht singleton
  * @return ulfberht
@@ -24,3 +15,6 @@ require_once __DIR__ . '/ulfberht/module/ulfberht/ulfberht.php';
 function ulfberht() {
     return ulfberht\core\ulfberht::getInstance();
 }
+
+//register ulfberht module
+ulfberht()->registerModule('ulfberht\module\ulfberht');

@@ -34,12 +34,12 @@ class ulfberht extends module {
         }
 
         $controller = ulfberht()->getService($controllerClass);
-
+        if ($controllerAction) {
+            if (!method_exists($controller, $controllerAction)) {
+                throw new Exception('Cound not find action method "' . $controllerAction . '" on controller "' . $controllerClass . '"');
+            }
+            call_user_func([$controller, $controllerAction]);
+        }
     }
 
 }
-
-//include clas definitions and register module
-require_once __DIR__ . '/service/config.php';
-require_once __DIR__ . '/service/router.php';
-ulfberht()->registerModule('ulfberht\module\ulfberht');

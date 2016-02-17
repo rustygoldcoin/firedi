@@ -1,15 +1,21 @@
 <?php
 
-require_once __DIR__ . '/src/ulfberht.php';
+// require_once __DIR__ . '/src/ulfberht.php';
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/src/debug.php';
 
 use ulfberht\core\module;
+use ulfberht\module\ulfberht;
 use ulfberht\module\ulfberht\config;
 use ulfberht\module\ulfberht\router;
 
 class abc {
     public function __construct(router $router) {
-        var_dump($router->getRouteVars());
+        $this->routeVars = $router->getRouteVars();
+    }
+    
+    public function action() {
+        echo 'Hello ' . $this->routeVars['name'];
     }
 }
 

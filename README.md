@@ -1,16 +1,14 @@
-#z20
+#Ulfberht Dependency Injection MVC
 
----
+Ulfberht was named after a Viking sword found to be the lightest and strongest sword of its time. 
 
-z20 is a powerful PHP Dependency Injection Container
-
-At its core, z20 was developed around the ideas of Service Based Dependency Injection and Modularization. As it turns out, follow these patterns gives us the flexibility to create modules that can support any architectural design and provide the base foundation your applications. 
+Ulfberht is a lightweight and powerful PHP Dependency Injection Container. At its core, Ulfberht was developed around the ideas of Service Based Dependency Injection and Modularization. As it turns out, following this pattern gives us the flexibility to create modules that can support any architectural design and provide the base foundation for any application. Ulfberht ships with a basic MVC Module (ulfberht\module\ulfberht) which provides Config, Router, View, Request, and Response objects to build out full MVC applications.
 
 ###Install z20 Using Composer:
 Installation is simple using the Composer Package Manager http://getcomposer.org/
 
-Then run the following command: <code>php composer.phar require jljlabs/z20/z20:dev-master</code><br>
-Then include z20 into your project. z20 will be located at: <code>[project_root]/vendor/jljlabs/z20/src/z20.php</code>
+Then run the following command: `composer require ua1-labs/ulfberht:dev-master`<br>
+Be sure to include ``
 
 ###Quick Start:
 
