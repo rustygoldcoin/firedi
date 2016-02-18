@@ -11,18 +11,21 @@
 namespace ulfberht\module\ulfberht;
 
 use ulfberht\module\ulfberht\config;
+use ulfberht\module\ulfberht\request;
 
 class router {
 
     private $_config;
+    private $_request;
     private $_currentRoute;
     private $_matchedRoute;
-    private $routeVars;
+    private $_routeVars;
 
-    public function __construct(config $config) {
+    public function __construct(config $config, request $request) {
         $this->_config = $config;
+        $this->_request = $request;
         $this->_config->set('routes', array());
-        $this->_currentRoute = $_SERVER['REQUEST_URI'];
+        $this->_currentRoute = $this->_request->server->get('REQUEST_URI');
         $this->_matchedRoute = false;
         $this->_routeVars = array();
     }
@@ -81,7 +84,7 @@ class router {
                         $i = 0;
                         foreach ($matchedRoute as $matchedRoutePart) {
                             if (strpos($matchedRoutePart, ':') !== false) {
-                                $this->routeVars[substr($matchedRoutePart, 1)] = $routeParts[$i];
+                                $this->_routeVars[substr($matchedRoutePart, 1)] = $routeParts[$i];
                             }
                             $i++;
                         }
@@ -100,11 +103,11 @@ class router {
 
     public function getRouteVars($routeParam = '') {
         if ($routeParam) {
-            if (isset($this->routeVars[$routeParam])) {
-                return $this->routeVars[$routeParam];
+            if (isset($this->_routeVars[$routeParam])) {
+                return $this->_routeVars[$routeParam];
             }
         } else {
-            return $this->routeVars;
+            return $this->_routeVars;
         }
         return false;
     }
