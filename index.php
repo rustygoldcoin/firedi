@@ -9,14 +9,17 @@ use ulfberht\module\ulfberht;
 use ulfberht\module\ulfberht\config;
 use ulfberht\module\ulfberht\router;
 use ulfberht\module\ulfberht\request;
+use ulfberht\module\ulfberht\response;
 
 class abc {
-    public function __construct(router $router) {
+    public function __construct(router $router, response $response) {
         $this->routeVars = $router->getRouteVars();
+        $this->response = $response;
     }
     
     public function action() {
-        echo 'Hello ' . $this->routeVars['name'];
+        $this->response->setContent('Hello ' . $this->routeVars['name']);
+        
     }
 }
 
@@ -46,5 +49,7 @@ class myModule extends module {
 }
 
 ulfberht()->registerModule('myModule');
-ulfberht()->go();
-ulfberht()->getModule('ulfberht\module\ulfberht')->invoke('mvc');
+ulfberht()
+    ->forge()
+    ->getModule('ulfberht\module\ulfberht')
+    ->invoke('mvc');

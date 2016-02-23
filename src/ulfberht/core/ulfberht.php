@@ -102,7 +102,7 @@ class ulfberht
         }
     }
 
-    public function go() {
+    public function swing() {
         //resolve all services
         foreach ($this->_modules as $moduleClassName => $module) {
             //run module dependency check for errors
@@ -127,6 +127,8 @@ class ulfberht
         foreach ($this->_modules as $moduleClassName => $module) {
             $module->invoke('run');
         }
+        
+        return $this;
     }
 
     public function destroy() {

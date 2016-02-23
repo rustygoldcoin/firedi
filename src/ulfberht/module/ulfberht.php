@@ -14,6 +14,7 @@ use Exception;
 use ulfberht\core\module;
 use ulfberht\module\ulfberht\router;
 use ulfberht\module\ulfberht\request;
+use ulfberht\module\ulfberht\response;
 
 class ulfberht extends module {
 
@@ -22,14 +23,18 @@ class ulfberht extends module {
         $this->registerSingleton('ulfberht\module\ulfberht\config');
         $this->registerSingleton('ulfberht\module\ulfberht\router');
         $this->registerSingleton('ulfberht\module\ulfberht\request');
+        $this->registerSingleton('ulfberht\module\ulfberht\response');
     }
 
-    public function mvc(router $router, request $request) {
+    public function mvc(router $router, request $request, response $response) {
         $controllerActionSetting = explode(':', $router->resolveRoute());
         $controllerClass = $controllerActionSetting[0];
         $controllerAction = (isset($controllerActionSetting[1])) ? $controllerActionSetting[1] : false;
         if (!$controllerClass) {
             throw new Exception('Could not find a controller to resolve.');
+        }
+        if (!$controllerAction) {
+            throw new Exception('A controller action was not defined.');
         }
         if (!ulfberht()->isService($controllerClass)) {
             throw new Exception('Could not find controller "' . $controllerClass . '"');
@@ -46,6 +51,9 @@ class ulfberht extends module {
             }
             call_user_func([$controller, $controllerAction]);
         }
+        
+        $response->prepare($request);
+        $response->send();
     }
 
 }

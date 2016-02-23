@@ -2,66 +2,66 @@
 
 Ulfberht was named after a Viking sword found to be the lightest and strongest sword of its time. 
 
-Ulfberht is a lightweight and powerful PHP Dependency Injection Container. At its core, Ulfberht was developed around the ideas of Service Based Dependency Injection and Modularization. As it turns out, following this pattern gives us the flexibility to create modules that can support any architectural design and provide the base foundation for any application. Ulfberht ships with a basic MVC Module (ulfberht\module\ulfberht) which provides Config, Router, View, Request, and Response objects to build out full MVC applications.
+Ulfberht is a lightweight and powerful PHP Dependency Injection Container plus MVC frameword. At its core, Ulfberht was developed around the ideas of Service Based Dependency Injection and Modularization. As it turns out, following this pattern gives us the flexibility to create modules that can support any architectural design and provide the base foundation for any application. Ulfberht ships with a basic MVC Module (ulfberht\module\ulfberht) which provides Config, Router, View, Request, and Response objects used to build out full MVC applications.
 
 ###Install z20 Using Composer:
 Installation is simple using the Composer Package Manager http://getcomposer.org/
 
-Then run the following command: `composer require ua1-labs/ulfberht:dev-master`<br>
-Be sure to include ``
+Then run the following command: `composer require ua1-labs/ulfberht:dev-master`
 
 ###Quick Start:
 
-1) Register a module:
+1) Register a module and services using `ulfberht\core\module`:
 	
-	//registering a module
-	$myModuleDependencies = array();
-	//by calling the module method, z20 will return the module object.
-	$myModule = z20::get()->module('myModule', $myModuleDependencies);
+    use ulfberht\core\module;
+    
+    class myModule extends module {
+        
+        public function __construct() {
+            //when this object builds it will create a new object every time.
+            $this->registerFactory('A');
+            //when this object builds it will return a cached version of the object.
+            $this->registerSingleton('B');
+        }
 
-2) Register a service:
+        public function config(A $a) {
+            //executed during the config process of ulfberht::forge();
+        }
 
-	//registering a service
-	$myModule->factory('myService', function(){
-		return new myService();	
-	}
+        public function run(A $a, B $b) {
+            //executed during the run process of the ulfbhert::forge();            
+        }
+    }
+    
+    //register the module with ulfberht
+    ulfberht()->registerModule('myModule');
 
-3) Load your module into the z20 runtimme environment
-
-	//load module
-	z20::get()->loadModule('myModule');
-
-4) Now you can inject myService everywhere!
-
-	//Inject myService
-	$myService = z20::get->injector('myService');
+---
 
 ###Automatic Dependency Injection:
 
-If you have one service that depends on another, z20 can automatically inject those services for you:
+If you have one service that depends on another, ulfberht can automatically inject those services for you:
 
-1) Register a module:
+Service `A` depends on `B`
 
-	$myModule = z20::get()->module('myModule')
+    //When A is constructed, B will construct first and be passed into
+    //A as part of the service resolution process.
+    class A {
+        public function __construct(B $b) {
+            var_dump($b);   
+        }
+    }
+    
+---
 
-2) Register your first service
-
-	$myModule->factory('FormValidator', function(){
-		return new FormValidator();
-	});
-
-3) Register your second service and ask for z20 to inject your first service by naming it the same as the service name. i.e. <code>$FormValidator</code>.
-
-	$myModule->factory('FormProcessor', function($FormValidator) {
-		return FormProcessor($FormValidator);
-	}
-
-4) Load Module:
-
-	//load module
-	z20::get()->loadModule('myModule');
-
-When you ask for the FormProcessor service to be injected so that you may use it, z20 will automatically try and resolve the FormValidator dependency you asked it for.
+You can also retrieve a service once you have forged your application with `ulfberht::forge()`
+    
+    //forging ulfberht
+    ulfberht()->forge();
+    //get constructed service
+    $a = ulfberht()->getService('A');
+    
+**More and Better Coming Soon!**    
 
 ###License:
 
