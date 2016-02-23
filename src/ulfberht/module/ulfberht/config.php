@@ -23,7 +23,10 @@ class config {
     }
     
     public function get($key) {
-        return $this->_config[$key];
+        if(isset($this->_config[$key])) {
+            return $this->_config[$key];
+        }
+        return false;
     }
     
 }

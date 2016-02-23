@@ -15,6 +15,8 @@ use ulfberht\core\module;
 use ulfberht\module\ulfberht\router;
 use ulfberht\module\ulfberht\request;
 use ulfberht\module\ulfberht\response;
+use Doctrine\ORM\Tools\Setup;
+use Doctrine\ORM\EntityManager;
 
 class ulfberht extends module {
 
@@ -24,6 +26,7 @@ class ulfberht extends module {
         $this->registerSingleton('ulfberht\module\ulfberht\router');
         $this->registerSingleton('ulfberht\module\ulfberht\request');
         $this->registerSingleton('ulfberht\module\ulfberht\response');
+        $this->registerSingleton('ulfberht\module\ulfberht\doctrine');
     }
 
     public function mvc(router $router, request $request, response $response) {

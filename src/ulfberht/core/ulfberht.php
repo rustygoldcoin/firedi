@@ -100,9 +100,11 @@ class ulfberht
                 $this->registerModule($dependency);
             }
         }
+        
+        return $this;
     }
 
-    public function swing() {
+    public function forge() {
         //resolve all services
         foreach ($this->_modules as $moduleClassName => $module) {
             //run module dependency check for errors
