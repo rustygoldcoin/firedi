@@ -30,24 +30,23 @@ class doctrine {
                 throw new Exception('Undefined parameter "database" in "' . $id . '" doctrine config.');
             }
             
+            $development = (isset($config['develop']) && $config['develop']) ? true : false;
             switch ($config['type']) {
                 case 'annotation':
-                    $docConfig = Setup::createAnnotationMetadataConfiguration($config['paths'], $config['develop']);
+                    $docConfig = Setup::createAnnotationMetadataConfiguration($config['paths'], $development);
                 break;
                 case 'xml':
-                    $docConfig = Setup::createXMLMetadataConfiguration($config['paths'], $config['develop']);
+                    $docConfig = Setup::createXMLMetadataConfiguration($config['paths'], $development);
                 break;
                 case 'yaml':
-                    $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $config['develop']);
+                    $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development);
                 break;
             }
             $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
-        }
-        
-                
+        }   
     }
     
-    public function get($id) {
+    public function getEntityManager($id) {
         if (!isset($this->_doctrineObjects[$id])) {
             throw new Exception('Could not find entityManager "' . $id . '"');
         }

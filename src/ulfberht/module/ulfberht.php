@@ -23,14 +23,17 @@ class ulfberht extends module {
     public function __construct() {
         //register config service
         $this->registerSingleton('ulfberht\module\ulfberht\config');
+        $this->registerSingleton('ulfberht\module\ulfberht\doctrine');
         $this->registerSingleton('ulfberht\module\ulfberht\router');
         $this->registerSingleton('ulfberht\module\ulfberht\request');
         $this->registerSingleton('ulfberht\module\ulfberht\response');
-        $this->registerSingleton('ulfberht\module\ulfberht\doctrine');
+        $this->registerSingleton('ulfberht\module\ulfberht\view');
     }
 
     public function mvc(router $router, request $request, response $response) {
-        $controllerActionSetting = explode(':', $router->resolveRoute());
+        $params = $router->resolve();
+        $request->attributes->add($params);
+        $controllerActionSetting = explode(':', $params['controller']);
         $controllerClass = $controllerActionSetting[0];
         $controllerAction = (isset($controllerActionSetting[1])) ? $controllerActionSetting[1] : false;
         if (!$controllerClass) {
@@ -41,10 +44,6 @@ class ulfberht extends module {
         }
         if (!ulfberht()->isService($controllerClass)) {
             throw new Exception('Could not find controller "' . $controllerClass . '"');
-        }
-        $routeVars = $router->getRouteVars();
-        if ($routeVars) {
-            $request->attributes->add($routeVars);
         }
 
         $controller = ulfberht()->getService($controllerClass);

@@ -1,128 +1,54 @@
 <?php
 
-/**
- * @package ulfberht
- * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://labs.ua1.us
- * @copyright Copyright 2016, Joshua L. Johnson
- * @license MIT
- */
-
 namespace ulfberht\module\ulfberht;
 
-use ulfberht\module\ulfberht\config;
+use Exception;
 use ulfberht\module\ulfberht\request;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 
 class router {
-
-    private $_config;
+    
     private $_request;
-    private $_currentRoute;
-    private $_matchedRoute;
-    private $_routeVars;
-
-    public function __construct(config $config, request $request) {
-        $this->_config = $config;
+    private $_routeCollection;
+    private $_defaultController;
+    
+    public function __construct(request $request) {
         $this->_request = $request;
-        $this->_config->set('routes', array());
-        $this->_currentRoute = $this->_request->server->get('REQUEST_URI');
-        $this->_matchedRoute = false;
-        $this->_routeVars = array();
+        $this->_routeCollection = new RouteCollection();
+        $this->_defaultController = false;
     }
-
+    
     public function when($path, $controller) {
-        $this->_setRoute($path, $controller);
+        $route = new Route($path, ['controller' => $controller]);
+        $this->_routeCollection->add($path, $route);
         return $this;
     }
-
+    
     public function otherwise($controller) {
-        $this->_setRoute('default', $controller);
+        $this->_defaultController = $controller;
         return $this;
     }
-
-    public function redirect($path) {
-        if (substr($path, 0, 1) != '/') {
-            $path = '/' . $path;
-        }
-        header('location:' . $path);
-    }
-
-    public function resolveRoute() {
-        $routeConfig = $this->_config->get('routes');
-        $currentRoute = $this->getCurrentRoute();
-        if (array_key_exists($currentRoute, $routeConfig)) {
-            $this->_matchedRoute = $currentRoute;
-            return $routeConfig[$currentRoute];
-        } else {
-            //remove url query params and parse route into its parts
-            $routeQuery = explode('?', $currentRoute);
-            $routeParts = explode('/', substr($routeQuery[0], 1));
-            foreach ($routeConfig as $path => $controller) {
-                if (strpos($path, ':') !== false) {
-                    $routeMatch = true;
-                    $pathParts = explode('/', substr($path, 1));
-                    $i = 0;
-                    foreach ($pathParts as $part) {
-                        if ($routeMatch) {
-                            $routeMatch = false;
-                            if (isset($routeParts[$i]) && $routeParts[$i] != '') {
-                                if (strpos($part, ':') !== false) {
-                                    $routeMatch = true;
-                                } elseif ($part == $routeParts[$i]) {
-                                    $routeMatch = true;
-                                }
-                            }
-                            $i++;
-                        }
-                    }
-                    if (isset($routeParts[$i])) {
-                        $routeMatch = false;
-                    }
-                    if ($routeMatch) {
-                        $this->_matchedRoute = $path;
-                        $matchedRoute = explode('/', substr($this->_matchedRoute, 1));
-                        $i = 0;
-                        foreach ($matchedRoute as $matchedRoutePart) {
-                            if (strpos($matchedRoutePart, ':') !== false) {
-                                $this->_routeVars[substr($matchedRoutePart, 1)] = $routeParts[$i];
-                            }
-                            $i++;
-                        }
-                        return $controller;
-                    }
-                }
+    
+    public function resolve() {
+        $currentRoute = $this->_request->server->get('REQUEST_URI');
+        $context = new RequestContext('/');
+        $matcher = new UrlMatcher($this->_routeCollection, $context);
+        try {
+            $parameters = $matcher->match($currentRoute);
+        } catch (Exception $e) {
+            if ($this->_defaultController) {
+                return [
+                    'controller' => $this->_defaultController,
+                    '_route' => 'default'
+                ];
             }
-            if (array_key_exists('default', $routeConfig)) {
-                $this->_matchedRoute = false;
-                return $routeConfig['default'];
-            } else {
-                return false;
-            }
+            throw new Exception('Could not find route "' . $currentRoute . '"');
         }
+        
+        return $parameters;
     }
-
-    public function getRouteVars($routeParam = '') {
-        if ($routeParam) {
-            if (isset($this->_routeVars[$routeParam])) {
-                return $this->_routeVars[$routeParam];
-            }
-        } else {
-            return $this->_routeVars;
-        }
-        return false;
-    }
-
-    public function getCurrentRoute() {
-        return $this->_currentRoute;
-    }
-
-    public function getMatchedRoute() {
-        return $this->_matchedRoute;
-    }
-
-    private function _setRoute($path, $controller) {
-        $routeConfig = $this->_config->get('routes');
-        $routeConfig[$path] = $controller;
-        $this->_config->set('routes', $routeConfig);
-    }
+    
 }
