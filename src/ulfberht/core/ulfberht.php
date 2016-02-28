@@ -47,7 +47,6 @@ class ulfberht
         if (!isset(self::$_ulfberht) || !(self::$_ulfberht)) {
             self::$_ulfberht = new self();
         }
-
         return self::$_ulfberht;
     }
 
@@ -63,10 +62,10 @@ class ulfberht
     }
 
     public function getModule($className) {
-        if ($this->isModule($className)) {
-            return $this->_modules[$className];
+        if (!$this->isModule($className)) {
+            throw new Exception('The module "' . $className . '" could not be found.');
         }
-        return false;
+        return $this->_modules[$className];
     }
 
     public function isModule($className) {

@@ -12,7 +12,10 @@
  * Returns the ulfberht singleton
  * @return ulfberht
  */
-function ulfberht() {
+function ulfberht($module = '') {
+    if ($module) {
+        return ulfberht\core\ulfberht::getInstance()->getModule($module);
+    }
     return ulfberht\core\ulfberht::getInstance();
 }
 

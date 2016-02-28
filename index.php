@@ -36,7 +36,7 @@ class myModule extends module {
     }
 
     public function run() {
-        ulfberht()->getModule('ulfberht\module\ulfberht')->invoke('mvc');
+        ulfberht('ulfberht\module\ulfberh')->invoke('mvc');
     }
 }
 
