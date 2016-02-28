@@ -1,8 +1,7 @@
 <?php
 
-// require_once __DIR__ . '/src/ulfberht.php';
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/src/debug.php';
+ulfberht\debug::enable();
 
 use ulfberht\core\module;
 use ulfberht\module\ulfberht;
@@ -11,12 +10,12 @@ use ulfberht\module\ulfberht\router;
 use ulfberht\module\ulfberht\view;
 
 class name {
-    
+
     public function __construct(request $request, view $view) {
         $this->request = $request;
         $this->view = $view;
     }
-    
+
     public function action() {
         $vm = ['name' => $this->request->attributes->get('name')];
         $this->view->render(__DIR__ . '/render.phtml', $vm);
@@ -36,7 +35,7 @@ class myModule extends module {
     }
 
     public function run() {
-        ulfberht('ulfberht\module\ulfberh')->invoke('mvc');
+        ulfberht('ulfberht\module\ulfberht')->invoke('mvc');
     }
 }
 

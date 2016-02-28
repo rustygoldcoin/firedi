@@ -24,9 +24,9 @@ class ulfberht extends module {
         //register config service
         $this->registerSingleton('ulfberht\module\ulfberht\config');
         $this->registerSingleton('ulfberht\module\ulfberht\doctrine');
-        $this->registerSingleton('ulfberht\module\ulfberht\router');
         $this->registerSingleton('ulfberht\module\ulfberht\request');
         $this->registerSingleton('ulfberht\module\ulfberht\response');
+        $this->registerSingleton('ulfberht\module\ulfberht\router');
         $this->registerSingleton('ulfberht\module\ulfberht\view');
     }
 
@@ -53,7 +53,7 @@ class ulfberht extends module {
             }
             call_user_func([$controller, $controllerAction]);
         }
-        
+
         $response->prepare($request);
         $response->send();
     }

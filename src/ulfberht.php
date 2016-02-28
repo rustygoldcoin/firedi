@@ -9,8 +9,8 @@
  */
 
 /**
- * Returns the ulfberht singleton
- * @return ulfberht
+ * Returns the ulfberht singleton or module object based on what is passed in.
+ * @return mixed Module or Ulfberht object
  */
 function ulfberht($module = '') {
     if ($module) {
@@ -19,5 +19,7 @@ function ulfberht($module = '') {
     return ulfberht\core\ulfberht::getInstance();
 }
 
-//register ulfberht module
+/**
+ * register the ulfberht\module\ulfberht module
+ */
 ulfberht()->registerModule('ulfberht\module\ulfberht');

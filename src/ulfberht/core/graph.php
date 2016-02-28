@@ -13,15 +13,15 @@ namespace ulfberht\core;
 use stdClass;
 
 /**
- * The ulfberhtgraph class makes it to easy to manage a dependency network
+ * This class makes it to easy to manage a dependency network
  * by allowing you to run dependency checks on all of the resources you have
  * available in your network.
  */
 class graph {
 
     /**
-     * This array is filled with dependencies that have resolved during the
-     * mock dependency check that is done when you run ulfberhtgraph::runDependencyCheck()
+     * This array is filled with dependencies that have been resolved during the
+     * dependency check that is done when you run ::runDependencyCheck()
      *
      * @var array
      */
@@ -29,7 +29,7 @@ class graph {
 
     /**
      * This array is filled with dependencies that have yet to be resolved during
-     * the mock dependency check that is done when you run ulfberhtgraph::runDependencyCheck().
+     * the dependency check that is done when you run ::runDependencyCheck().
      *
      * @var array
      */
@@ -43,14 +43,7 @@ class graph {
      */
     protected $_resourceGraph;
 
-    /**
-     * This var is used to determine if an error had been produced during
-     * the mock dependency check when you run ulfberhtgraph::runDependencyCheck().
-     *
-     * @var boolean
-     */
-    protected $_dependencyError;
-    
+
     protected $_errorCodes;
 
     /**
@@ -68,7 +61,7 @@ class graph {
      * This method is used to add a resource to the dependecy graph.
      *
      * @param string $resourse_id A unique ID that identifies a resource
-     * @return ulfberhtgraph
+     * @return
      */
     public function addResource($resourse_id) {
         $this->_resourceGraph[$resourse_id] = [];
@@ -98,7 +91,7 @@ class graph {
      * want to add dependencies to.
      * @param array $dependencies An array that contains the dependencies you want
      * to apply to the resource.
-     * @return ulfberhtgraph
+     * @return
      */
     public function addDependencies($resourceId, array $dependencies) {
         $this->_resourceGraph[$resourceId] = array_merge($this->_resourceGraph[$resourceId], $dependencies);
@@ -173,13 +166,15 @@ class graph {
         $this->_resolved = [];
         $this->_unresolved = [];
     }
-    
+
     private function _errorConfig() {
         //error code config
-        $error1 = new stdClass();
-        $error1->code = 1;
-        $error1->resourceId = false;
-        $error1->description = 'Resource Not Found';
+        $error1 = (object) [
+            'code' => 1,
+            'resourceId' => false,
+            'description' => 'Resource Not Found'
+        ];
+
         $error2 = new stdClass();
         $error2->code = 2;
         $error2->resourceId = false;
@@ -189,20 +184,20 @@ class graph {
             2 => $error2
         ];
     }
-    
+
     private function _getError($code, $resourceId = false) {
         $error = $this->_errorCodes[$code];
         $error->resourceId = $resourceId;
         $this->resetDepenencyCheck();
         return $error;
     }
-    
+
     private function _runResourceExistsCheck($resourceId) {
         if (!$this->isResource($resourceId)) {
             return $this->_getError(1, $resourceId);
         }
     }
-    
+
     private function _runCircularDependencyCheck($resourceId) {
         $this->_unresolved[$resourceId] = $resourceId;
         foreach ($this->_resourceGraph[$resourceId] as $dependency) {
