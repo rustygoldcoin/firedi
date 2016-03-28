@@ -35,12 +35,15 @@ class ulfberht
 
     private $_serviceDependencyGraph;
 
+    private $_forged;
+
     private function __construct() {
         $this->_modules = [];
         $this->_serviceModuleMap = [];
         $this->_serviceCache = [];
         $this->_moduleDependencyGraph = new graph();
         $this->_serviceDependencyGraph = new graph();
+        $this->_forged = false;
     }
 
     public static function getInstance() {
@@ -99,8 +102,12 @@ class ulfberht
                 $this->registerModule($dependency);
             }
         }
-        
+
         return $this;
+    }
+
+    public function isForged() {
+        return $this->_forged;
     }
 
     public function forge() {
@@ -128,7 +135,9 @@ class ulfberht
         foreach ($this->_modules as $moduleClassName => $module) {
             $module->invoke('run');
         }
-        
+
+        $this->_forged = true;
+
         return $this;
     }
 
