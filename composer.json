@@ -1,16 +1,17 @@
 {
-    "name": "ua1-labs/ulfberht",
-    "description": "Ulfberht is a powerful and light weight service based Dependency Injection framework. Now built with MVC.",
+    "name": "ulfberht-php/framework",
+    "description": "Ulfberht is a powerful and light weight service based Dependency Injection framework. Now built with MVC!",
     "type": "library",
     "keywords": [
         "ulfberht",
-        "Dependency Injection",
-        "MVC"
+        "dependency injection",
+        "di",
+        "mvc"
     ],
     "homepage": "http://labs.ua1.us",
     "license": "MIT",
     "require": {
-        "php": ">=5.5.0",
+        "php": ">=5.4.0",
         "symfony/http-foundation": "^3.0",
         "doctrine/orm": "~2.5.4",
         "symfony/routing": "^3.0"

@@ -3,11 +3,11 @@
 require_once __DIR__ . '/vendor/autoload.php';
 ulfberht\debug::enable();
 
-use ulfberht\core\module;
-use ulfberht\module\ulfberht;
-use ulfberht\module\ulfberht\request;
-use ulfberht\module\ulfberht\router;
-use ulfberht\module\ulfberht\view;
+use ulfberht\core\module as baseModule;
+use ulfberht\module;
+use ulfberht\module\request;
+use ulfberht\module\router;
+use ulfberht\module\view;
 
 class name {
 
@@ -40,4 +40,8 @@ class myModule extends module {
 }
 
 ulfberht()->registerModule('myModule');
+ulfberht()->setHooks([
+    'config',
+    'mvc'
+]);
 ulfberht()->forge();

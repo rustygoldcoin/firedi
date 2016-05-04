@@ -12,7 +12,7 @@
  * Returns the ulfberht singleton or module object based on what is passed in.
  * @return mixed Module or Ulfberht object
  */
-function ulfberht($module = '') {
+function ulfberht($module = null) {
     if ($module) {
         return ulfberht\core\ulfberht::getInstance()->getModule($module);
     }
@@ -20,6 +20,6 @@ function ulfberht($module = '') {
 }
 
 /**
- * register the ulfberht\module\ulfberht module
+ * register the ulfberht\module module
  */
-ulfberht()->registerModule('ulfberht\module\ulfberht');
+ulfberht()->registerModule('ulfberht\module');

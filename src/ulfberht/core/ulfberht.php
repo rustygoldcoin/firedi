@@ -37,6 +37,8 @@ class ulfberht
 
     private $_forged;
 
+    private $_hooks;
+
     private function __construct() {
         $this->_modules = [];
         $this->_serviceModuleMap = [];
@@ -44,6 +46,7 @@ class ulfberht
         $this->_moduleDependencyGraph = new graph();
         $this->_serviceDependencyGraph = new graph();
         $this->_forged = false;
+        $this->_hooks = [];
     }
 
     public static function getInstance() {
@@ -51,6 +54,15 @@ class ulfberht
             self::$_ulfberht = new self();
         }
         return self::$_ulfberht;
+    }
+
+    public function setHooks($hooks) {
+        $this->_hooks = $hooks;
+        return $this;
+    }
+
+    public function getHooks() {
+        return $this->_hooks;
     }
 
     public function getService($className) {
@@ -69,13 +81,6 @@ class ulfberht
             throw new Exception('The module "' . $className . '" could not be found.');
         }
         return $this->_modules[$className];
-    }
-
-    public function isModule($className) {
-        return (
-            isset($this->_modules[$className])
-            && !empty($this->_modules[$className])
-        ) ? true : false;
     }
 
     public function registerModule($className) {
@@ -106,8 +111,11 @@ class ulfberht
         return $this;
     }
 
-    public function isForged() {
-        return $this->_forged;
+    public function isModule($className) {
+        return (
+            isset($this->_modules[$className])
+            && !empty($this->_modules[$className])
+        ) ? true : false;
     }
 
     public function forge() {
@@ -127,18 +135,21 @@ class ulfberht
                 }
             }
         }
-        //run each module's start method
-        foreach ($this->_modules as $moduleClassName => $module) {
-            $module->invoke('config');
-        }
-        //run each module's run method
-        foreach ($this->_modules as $moduleClassName => $module) {
-            $module->invoke('run');
+
+        foreach ($this->getHooks() as $hook) {
+            //run each module's hook method
+            foreach ($this->_modules as $moduleClassName => $module) {
+                $module->invoke($hook);
+            }
         }
 
         $this->_forged = true;
 
         return $this;
+    }
+
+    public function isForged() {
+        return $this->_forged;
     }
 
     public function destroy() {

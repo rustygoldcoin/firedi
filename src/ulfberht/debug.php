@@ -10,8 +10,6 @@
 
 namespace ulfberht;
 
-use Exception;
-
 /**
  * The purpose of this class is to provide a global exception handler to help debug
  * applications.
@@ -42,7 +40,7 @@ class debug {
      * A function that is used to handle thrown Exceptions.
      * @param strong $exception The Exception thown
      */
-    public static function ulfberhtExceptionHandler(Exception $exception) {
+    public static function ulfberhtExceptionHandler($exception) {
         header('HTTP/1.1 500 Internal Server Error', 500);
         if (php_sapi_name() == 'cli') {
             exit('ULFBERHT CRITICAL ERROR ==> ' . $exception->getMessage());
