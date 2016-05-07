@@ -1,5 +1,5 @@
 {
-    "name": "ulfberht-php/framework",
+    "name": "ua1-labs/ulfberht",
     "description": "Ulfberht is a powerful and light weight service based Dependency Injection framework. Now built with MVC!",
     "type": "library",
     "keywords": [
@@ -8,7 +8,6 @@
         "di",
         "mvc"
     ],
-    "homepage": "http://labs.ua1.us",
     "license": "MIT",
     "require": {
         "php": ">=5.4.0",
