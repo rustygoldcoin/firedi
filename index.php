@@ -22,9 +22,10 @@ class name {
     }
 }
 
-class myModule extends module {
+class myModule extends baseModule {
 
     public function __construct() {
+        $this->dependsOn('ulfberht\module');
         $this->registerSingleton('name');
     }
 
@@ -34,9 +35,6 @@ class myModule extends module {
         $router->otherwise('name:404');
     }
 
-    public function run() {
-        ulfberht('ulfberht\module\ulfberht')->invoke('mvc');
-    }
 }
 
 ulfberht()->registerModule('myModule');
@@ -44,4 +42,5 @@ ulfberht()->setHooks([
     'config',
     'mvc'
 ]);
+
 ulfberht()->forge();

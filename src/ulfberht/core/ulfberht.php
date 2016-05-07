@@ -136,7 +136,8 @@ class ulfberht
             }
         }
 
-        foreach ($this->getHooks() as $hook) {
+        $moduleHooks = $this->getHooks();      
+        foreach ($moduleHooks as $hook) {
             //run each module's hook method
             foreach ($this->_modules as $moduleClassName => $module) {
                 $module->invoke($hook);
