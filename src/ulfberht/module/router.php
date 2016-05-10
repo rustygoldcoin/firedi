@@ -53,10 +53,11 @@ class router {
 
     public function resolve() {
         $currentRoute = $this->_request->server->get('REQUEST_URI');
-        $context = new RequestContext('/');
+        $context = new RequestContext();
+        $context->fromRequest($this->_request);
         $matcher = new UrlMatcher($this->_routeCollection, $context);
         try {
-            $parameters = $matcher->match($currentRoute);
+            $parameters = $matcher->matchRequest($this->_request);
         } catch (Exception $e) {
             if ($this->_defaultController) {
                 return [
@@ -73,7 +74,7 @@ class router {
     private function _addRoute($path, $controller, $method = '') {
         $route = new Route($path, ['controller' => $controller]);
         if ($method) {
-            $route->setMethods([$method]);
+            $route->setMethods($method);
         }
         $this->_routeCollection->add($path, $route);
     }
