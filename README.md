@@ -58,7 +58,7 @@ You can also retrieve a service once you have forged your application with `ulfb
     //forging ulfberht
     ulfberht()->forge();
     //get constructed service
-    $a = ulfberht()->getService('A');
+    $a = ulfberht()->get('A');
 
 **More and Better Coming Soon!**
 

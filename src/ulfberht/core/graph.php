@@ -1,9 +1,8 @@
 <?php
-
 /**
  * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://labs.ua1.us
+ * @link http://ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
@@ -167,6 +166,9 @@ class graph {
         $this->_unresolved = [];
     }
 
+    /**
+     * This method is a helper method to set the default error config values.
+     */
     private function _errorConfig() {
         //error code config
         $error1 = (object) [
@@ -174,17 +176,26 @@ class graph {
             'resourceId' => false,
             'description' => 'Resource Not Found'
         ];
-
-        $error2 = new stdClass();
-        $error2->code = 2;
-        $error2->resourceId = false;
-        $error2->description = 'Circular Dependency Detected';
+        
+        $error2 = (object) [
+            'code' => 2,
+            'resourceId' => false,
+            'description' => 'Circular Dependency Detected'
+        ];
+        
         $this->_errorCodes = [
             1 => $error1,
             2 => $error2
         ];
     }
 
+    /**
+     * This method returns an error object based on the code sets the resourceId.
+     *
+     * @param $code interger The error code you would like the associate with the error.
+     * @param $resourceId string The resourceId identified that caused the error.
+     * @return object The error object that represents the runtime error.
+     */
     private function _getError($code, $resourceId = false) {
         $error = $this->_errorCodes[$code];
         $error->resourceId = $resourceId;
@@ -192,12 +203,25 @@ class graph {
         return $error;
     }
 
+    /**
+     * This method is used to check to see if a resource exist in the graph object.
+     *
+     * @param resourceId The resourceId you would like to check.$_COOKIE
+     * @return mixed Null if resourceId is found. Error object if resource not found.
+     */
     private function _runResourceExistsCheck($resourceId) {
         if (!$this->isResource($resourceId)) {
             return $this->_getError(1, $resourceId);
         }
     }
 
+    /**
+     * This method checks a resource and its dependencies for any situations where
+     * there is a case that causes the dependnecy to be not resolvable.
+     *
+     * @param string The resource you would like to run the check for.
+     * @return mixed Null if no error. Error object if it finds an error.
+     */
     private function _runCircularDependencyCheck($resourceId) {
         $this->_unresolved[$resourceId] = $resourceId;
         foreach ($this->_resourceGraph[$resourceId] as $dependency) {

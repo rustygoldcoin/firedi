@@ -1,9 +1,8 @@
 <?php
-
 /**
  * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://labs.ua1.us
+ * @link http://ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
@@ -41,11 +40,11 @@ class module extends baseModule {
         if (!$controllerAction) {
             throw new Exception('A controller action was not defined.');
         }
-        if (!ulfberht()->isService($controllerClass)) {
+        if (!ulfberht()->exists($controllerClass)) {
             throw new Exception('Could not find controller "' . $controllerClass . '"');
         }
 
-        $controller = ulfberht()->getService($controllerClass);
+        $controller = ulfberht()->get($controllerClass);
         if ($controllerAction) {
             if (!method_exists($controller, $controllerAction)) {
                 throw new Exception('Cound not find action method "' . $controllerAction . '" on controller "' . $controllerClass . '"');

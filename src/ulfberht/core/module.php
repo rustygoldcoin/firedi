@@ -1,9 +1,8 @@
 <?php
-
 /**
  * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://labs.ua1.us
+ * @link http://ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
@@ -66,6 +65,12 @@ abstract class module {
         return $this;
     }
     
+    /*
+     * This method is used to invoke a public method on this object and inject it dependencies
+     * defined as parameters on the method.
+     *
+     * @param string The method name you want to invoke on the module.
+     */
     public function invoke($methodName) {
         if (method_exists($this, $methodName)) {
             $reflect = new ReflectionClass($this);
@@ -77,7 +82,7 @@ abstract class module {
                     $dependency = $parameter->getClass();
                     if ($dependency) {
                         $serviceClassName = $dependency->getName();
-                        $di[] = ulfberht()->getService($serviceClassName);
+                        $di[] = ulfberht()->get($serviceClassName);
                     }
                 }
                 $moduleMethod->invokeArgs($this, $di);

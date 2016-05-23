@@ -1,9 +1,8 @@
 <?php
-
 /**
  * @package ulfberht
  * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://labs.ua1.us
+ * @link http://ua1.us
  * @copyright Copyright 2016, Joshua L. Johnson
  * @license MIT
  */
@@ -17,28 +16,57 @@ use ulfberht\core\module;
 use ulfberht\core\service;
 
 /**
- * The ulfberht Class is what makes ulfberht possible. This class handles the
+ * The ulfberht class is what makes ulfberht possible. This class handles the
  * entire Dependency Injection environment.
  */
-class ulfberht
-{
+class ulfberht {
 
+    /**
+     * @var object The ulfberht instance object.
+     */
     private static $_ulfberht;
 
+    /**
+     * @var array An array that holds the module objects.
+     */
     private $_modules;
 
+    /**
+     * @var array A map that provides mappings to services and
+     * which module they belong to.
+     */
     private $_serviceModuleMap;
 
+    /**
+     * @var array Stores singleton object services that have been
+     * registered as singleton type service.
+     */
     private $_serviceCache;
-
+    
+    /**
+     * @var \ulfberht\core\graph
+     */
     private $_moduleDependencyGraph;
-
+    
+    /**
+     * @var \ulfberht\core\graph
+     */
     private $_serviceDependencyGraph;
 
+    /**
+     * @var boolean Identifies if ulfberht has been forged meaning that you
+     * may no longer register new services or modules to it.
+     */
     private $_forged;
 
+    /**
+     * @var array An array of hooks we want to run during the forge process.
+     */
     private $_hooks;
 
+    /**
+     * The constructor.
+     */
     private function __construct() {
         $this->_modules = [];
         $this->_serviceModuleMap = [];
@@ -49,6 +77,11 @@ class ulfberht
         $this->_hooks = [];
     }
 
+    /**
+     * Gets the singleton instance of this class.
+     *
+     * @return object The class instance.
+     */
     public static function getInstance() {
         if (!isset(self::$_ulfberht) || !(self::$_ulfberht)) {
             self::$_ulfberht = new self();
@@ -56,26 +89,57 @@ class ulfberht
         return self::$_ulfberht;
     }
 
+    /**
+     * This method is for setting hooks that will be invoked on any
+     * module that has a public method with the same name.
+     * 
+     * @param $hooks array The hooks you want to run when the forging process runs.
+     * @return object This
+     */
     public function setHooks($hooks) {
         $this->_hooks = $hooks;
         return $this;
     }
 
+    /**
+     * This method is used to get the hooks that have already been set.
+     *
+     * @return array The hooks that have been set.
+     */
     public function getHooks() {
         return $this->_hooks;
     }
 
-    public function getService($className) {
+    /**
+     * This method is used get the instanciated version of a class that has been
+     * registered in a module.`
+     *
+     * @param $className string The class you would like to instanciate.
+     * @return The instanciated object based on the $className.
+     */
+    public function get($className) {
         return $this->_resolveService($className);
     }
 
-    public function isService($className) {
+    /*
+     * This method is used to check to see if a class has been registered to
+     * be used with ulfberht.
+     *
+     * @param $className string The class you want to check
+     */
+    public function exists($className) {
         return (
             isset($this->_serviceModuleMap[$className])
             && !empty($this->_serviceModuleMap[$className])
         ) ? true : false;
     }
 
+    /**
+     * This method is used to get an instanciated module after it has been registered.
+     *
+     * @param $className string The name of the class you registered the module under.
+     * $return object The instanciated module.
+     */
     public function getModule($className) {
         if (!$this->isModule($className)) {
             throw new Exception('The module "' . $className . '" could not be found.');
@@ -83,6 +147,12 @@ class ulfberht
         return $this->_modules[$className];
     }
 
+    /**
+     * This method is used to register a module by its class name.
+     *
+     * @param $className string The class you want to register as a module.
+     * @return object This
+     */
     public function registerModule($className) {
         if (!class_exists($className)) {
             throw new Exception('Cannot find class "' . $className . '"');
@@ -111,6 +181,11 @@ class ulfberht
         return $this;
     }
 
+    /**
+     * This method check to determine if a module has been registered.
+     *
+     * @param $className string The class name associated with the module you want to check for.
+     */
     public function isModule($className) {
         return (
             isset($this->_modules[$className])
@@ -118,7 +193,11 @@ class ulfberht
         ) ? true : false;
     }
 
-    public function forge() {
+    public function forge($hooks = null) {
+        //set hooks
+        if ($hooks && is_array($hooks)) {
+            $this->setHooks($hooks);
+        }
         //resolve all services
         foreach ($this->_modules as $moduleClassName => $module) {
             //run module dependency check for errors
@@ -211,7 +290,7 @@ class ulfberht
     }
 
     private function _serviceDependencyErrorCheck($className) {
-        if (!$this->isService($className)) {
+        if (!$this->exists($className)) {
             $errorMsg = 'The service "' . $className . '" could not be found.';
             throw new Exception($errorMsg);
         }
