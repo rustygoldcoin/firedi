@@ -50,8 +50,16 @@ class doctrine {
                     $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development);
                 break;
             }
+            $this->_doctrineObjects['config'] = $docConfig;
             $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
         }
+    }
+
+    public function getDotrineConfig() {
+        if (!isset($this->_doctrineObjects['config'])) {
+            throw new Exception('Could not find doctrine config object');
+        }
+        return $this->_doctrineObjects['config'];
     }
 
     public function getEntityManager($id) {
