@@ -17,11 +17,11 @@ use Doctrine\ORM\EntityManager;
 class doctrine {
 
     private $_config;
+    private $_docConfig = [];
 
-    private $_doctrineObjects;
+    private $_doctrineObjects = [];
 
     public function __construct(config $config) {
-        $this->_doctrineObjects = [];
         $this->_config = $config->get('doctrine');
         if (!$this->_config) {
             throw new Exception('Could not find Doctrine Config.');
@@ -50,16 +50,16 @@ class doctrine {
                     $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development);
                 break;
             }
-            $this->_doctrineObjects['config'] = $docConfig;
+            $this->_docConfig[$id] = $docConfig;
             $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
         }
     }
 
-    public function getDotrineConfig() {
-        if (!isset($this->_doctrineObjects['config'])) {
-            throw new Exception('Could not find doctrine config object');
+    public function getDotrineConfig($id) {
+        if (!isset($this->_docConfig)) {
+            throw new Exception('Could not find doctrine config object for "' .$id .'"');
         }
-        return $this->_doctrineObjects['config'];
+        return $this->_docConfig[$id];
     }
 
     public function getEntityManager($id) {
