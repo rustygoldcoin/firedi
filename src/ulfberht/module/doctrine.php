@@ -38,19 +38,35 @@ class doctrine {
                 throw new Exception('Undefined parameter "database" in "' . $id . '" doctrine config.');
             }
 
+            if (!isset($config['enableSecondLevelCache'])) {
+                $config['enableSecondLevelCache'] = false;
+            }
+
+            if ($config['enableSecondLevelCache']) {
+                if ($development) {
+                    $cache = new \Doctrine\Common\Cache\ArrayCache;
+                } else {
+                    $cache = new \Doctrine\Common\Cache\ApcCache;
+                }
+            }
+
             $development = (isset($config['develop']) && $config['develop']) ? true : false;
             switch ($config['type']) {
                 case 'annotation':
-                    $docConfig = Setup::createAnnotationMetadataConfiguration($config['paths'], $development);
+                    $docConfig = Setup::createAnnotationMetadataConfiguration($config['paths'], $development, null, $cache);
                 break;
                 case 'xml':
-                    $docConfig = Setup::createXMLMetadataConfiguration($config['paths'], $development);
+                    $docConfig = Setup::createXMLMetadataConfiguration($config['paths'], $development, null, $cache);
                 break;
                 case 'yaml':
-                    $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development);
+                    $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development, null, $cache);
                 break;
             }
             $this->_docConfig[$id] = $docConfig;
+            if (isset($cache)) {
+                $docConfig->setQueryCacheImpl($cache);
+                $docConfig->setMetadataCacheImpl($cache);
+            }
             $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
         }
     }
