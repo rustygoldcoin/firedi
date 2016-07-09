@@ -7,7 +7,6 @@ use ulfberht\module\config;
 use ulfberht\module\request;
 use ulfberht\module\response;
 use ulfberht\module\router;
-use module\application\configIni;
 
 /**
  * The application module is the backbone of Ulfberht Applications and provides much of the
