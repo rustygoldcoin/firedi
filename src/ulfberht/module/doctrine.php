@@ -53,7 +53,7 @@ class doctrine {
             $docConfig->setQueryCacheImpl($cache);
             $docConfig->setMetadataCacheImpl($cache);
         }
-        echo '<pre>';
+
         $dbConnInfo = Array(
             'driver'     =>  'pdo_mysql',
             'host'       =>  $config->get('environment')->docker->database->host,
