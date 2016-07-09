@@ -30,7 +30,7 @@ class doctrine {
         }
 
         $development = (isset($this->_config['develop']) && $this->_config['develop']) ? true : false;
-        echo '<pre>';
+
         if ($this->_config['enableCache']) {
             $cache = new \Doctrine\Common\Cache\ArrayCache;
         } else {
