@@ -1,83 +1,121 @@
 <?php
+
+namespace module;
+
+use ulfberht\core\module;
+use ulfberht\module\config;
+use ulfberht\module\request;
+use ulfberht\module\response;
+use ulfberht\module\router;
+use module\application\configIni;
+
 /**
- * @package ulfberht
- * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://ua1.us
- * @copyright Copyright 2016, Joshua L. Johnson
- * @license MIT
+ * The application module is the backbone of Ulfberht Applications and provides much of the
+ * automatical things we see like initializing configurations.
  */
 
-namespace ulfberht\module;
+class application extends module {
 
-use Exception;
-use ulfberht\module\config;
-use Doctrine\ORM\Tools\Setup;
-use Doctrine\ORM\EntityManager;
+    /**
+     * The Constructor
+     */
+    public function __construct() {
+        $this->dependsOn('ulfberht\module');
+        $this->dependsOn('module\debugger');
+    }
 
-class doctrine {
+    /**
+     * Initializes the ulfberht application
+     *
+     * @param $config ulfberht\module\config
+     * @param $config ulfberht\module\request
+     * @param $config ulfberht\module\router
+     */
+    public function applicationInit(config $config, request $request, router $router) {
+        $this->applicationInitConfig($config, $request);
+        $this->applicationInitRoutes($config, $router);
+    }
 
-    private $_config;
-    private $_docConfig = [];
+    /*
+     * This method is responsible for loading in initial application configurations from
+     * application ini files located in /src/module/application/configs/application.ini
+     *
+     * @param $config ulfberht\module\config
+     * @param $request ulfberht\module\request
+     */
+    public function applicationInitConfig(config $config, request $request) {
+        //get app config and loop though additional configs
+        $appConfigSrcPath = APPLICATION_ROOT . '/src/module/application/config/application.ini';
+        $appConfigIni = $this->_getConfigIniFromIniPath($appConfigSrcPath);
+        $appConfigName = $this->_getFileNameFromIniPath($appConfigSrcPath);
+        $config->set($appConfigName, $appConfigIni);
 
-    private $_doctrineObjects = [];
-
-    public function __construct(config $config) {
-        $this->_config = $config->get('doctrine');
-        if (!$this->_config) {
-            throw new Exception('Could not find Doctrine Config.');
+        //look through application config configs array and setup those configs
+        $configs = ($appConfigIni->configs) ? $appConfigIni->configs : [];
+        foreach ($appConfigIni->configs as $configPath) {
+            $configSrcPath = APPLICATION_ROOT . $configPath;
+            $configIni = $this->_getConfigIniFromIniPath($configSrcPath);
+            $configName = $this->_getFileNameFromIniPath($configSrcPath);
+            $config->set($configName, $configIni);
         }
 
-        foreach ($this->_config as $id => $config) {
-            if (!isset($config['type'])) {
-                throw new Exception('Undefined parameter "type" in "' . $id . '" doctrine config.');
-            }
-            if (!isset($config['paths'])) {
-                throw new Exception('Undefined parameter "paths" in "' . $id . '" doctrine config.');
-            }
-            if (!isset($config['database'])) {
-                throw new Exception('Undefined parameter "database" in "' . $id . '" doctrine config.');
-            }
+        //setup env config
+        $host = $request->server->get('HTTP_HOST');
 
-            $development = (isset($config['develop']) && $config['develop']) ? true : false;
+        //if host comes back undefined assume localhost:8000 settings
+        if (!$host) {
+            $host = 'localhost:8000';
+        }
+        $envConfig = $config->get('environment')->{$host};
+        $config->set('ENV', $envConfig);
+    }
 
-            if ($config['enableCache']) {
-                $cache = new \Doctrine\Common\Cache\ArrayCache;
-            } else {
-                $cache = null;
+    /**
+     * This method is responsible for loading in routes based on routes.ini
+     *
+     * @param $config ulfberht\module\config
+     * @param $request ulfberht\module\router
+     */
+    public function applicationInitRoutes(config $config, router $router) {
+        $routesConfig = $config->get('routes');
+        foreach (['get', 'put', 'post', 'delete'] as $verb) {
+            $routes = $routesConfig->{$verb}->routes;
+            if (isset($routes) && is_object($routes)) {
+                foreach ($routes as $path => $controller) {
+                    $router->{$verb}($path, $controller);
+                }
             }
-
-            switch ($config['type']) {
-                case 'annotation':
-                    $docConfig = Setup::createAnnotationMetadataConfiguration($config['paths'], $development, null, $cache);
-                break;
-                case 'xml':
-                    $docConfig = Setup::createXMLMetadataConfiguration($config['paths'], $development, null, $cache);
-                break;
-                case 'yaml':
-                    $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development, null, $cache);
-                break;
-            }
-            $this->_docConfig[$id] = $docConfig;
-            if (!is_null($cache)) {
-                $docConfig->setQueryCacheImpl($cache);
-                $docConfig->setMetadataCacheImpl($cache);
-            }
-            $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
+        }
+        //setting default controller if it is set in routes.ini
+        if ($routesConfig->default) {
+            $router->otherwise($routesConfig->default);
         }
     }
 
-    public function getDotrineConfig($id) {
-        if (!isset($this->_docConfig)) {
-            throw new Exception('Could not find doctrine config object for "' .$id .'"');
-        }
-        return $this->_docConfig[$id];
+    /**
+     * This method is responsible for returning a configIni object wrapping
+     * which ever ini file is passed in.
+     *
+     * @param $fileSrcPath string - The path to the ini file.
+     * @return string
+     */
+    private function _getConfigIniFromIniPath($fileSrcPath) {
+        $parser = new \IniParser($fileSrcPath);
+        return $parser->parse();
     }
 
-    public function getEntityManager($id) {
-        if (!isset($this->_doctrineObjects[$id])) {
-            throw new Exception('Could not find entityManager "' . $id . '"');
-        }
-        return $this->_doctrineObjects[$id];
+    /**
+     * Returns the filename of the files source path you pass into it.
+     *
+     * @param $fileSrcPath string - The path to the ini file.
+     * @return string The filename parsed out of the path.
+     */
+    private function _getFileNameFromIniPath($fileSrcPath) {
+        $pathParts = preg_split('/\//', $fileSrcPath);
+        $fileName = $pathParts[count($pathParts) - 1];
+        $fileNameParts = preg_split('/\./', $fileName);
+
+        return $fileNameParts[0];
     }
 
 }
