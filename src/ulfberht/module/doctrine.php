@@ -64,20 +64,13 @@ class doctrine {
                     $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development, null, $cache);
                 break;
             }
-            $this->_docConfig[$id] = $docConfig;
+
             if (!is_null($cache)) {
                 $docConfig->setQueryCacheImpl($cache);
                 $docConfig->setMetadataCacheImpl($cache);
             }
             $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
         }
-    }
-
-    public function getDotrineConfig($id) {
-        if (!isset($this->_docConfig)) {
-            throw new Exception('Could not find doctrine config object for "' .$id .'"');
-        }
-        return $this->_docConfig[$id];
     }
 
     public function getEntityManager($id) {
