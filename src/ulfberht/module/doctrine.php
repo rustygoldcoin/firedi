@@ -41,11 +41,7 @@ class doctrine {
             $development = (isset($config['develop']) && $config['develop']) ? true : false;
 
             if ($config['enableCache']) {
-                if ($development) {
-                    $cache = new \Doctrine\Common\Cache\ArrayCache;
-                } else {
-                    $cache = new \Doctrine\Common\Cache\ApcCache;
-                }
+                $cache = new \Doctrine\Common\Cache\ArrayCache;
             } else {
                 $cache = null;
             }
