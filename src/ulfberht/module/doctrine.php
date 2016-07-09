@@ -38,11 +38,9 @@ class doctrine {
                 throw new Exception('Undefined parameter "database" in "' . $id . '" doctrine config.');
             }
 
-            if (!isset($config['enableSecondLevelCache'])) {
-                $config['enableSecondLevelCache'] = false;
-            }
+            $development = (isset($config['develop']) && $config['develop']) ? true : false;
 
-            if ($config['enableSecondLevelCache']) {
+            if ($config['enableCache']) {
                 if ($development) {
                     $cache = new \Doctrine\Common\Cache\ArrayCache;
                 } else {
@@ -52,7 +50,6 @@ class doctrine {
                 $cache = null;
             }
 
-            $development = (isset($config['develop']) && $config['develop']) ? true : false;
             switch ($config['type']) {
                 case 'annotation':
                     $docConfig = Setup::createAnnotationMetadataConfiguration($config['paths'], $development, null, $cache);
@@ -64,13 +61,20 @@ class doctrine {
                     $docConfig = Setup::createYAMLMetadataConfiguration($config['paths'], $development, null, $cache);
                 break;
             }
-
+            $this->_docConfig[$id] = $docConfig;
             if (!is_null($cache)) {
                 $docConfig->setQueryCacheImpl($cache);
                 $docConfig->setMetadataCacheImpl($cache);
             }
             $this->_doctrineObjects[$id] = EntityManager::create($config['database'], $docConfig);
         }
+    }
+
+    public function getDotrineConfig($id) {
+        if (!isset($this->_docConfig)) {
+            throw new Exception('Could not find doctrine config object for "' .$id .'"');
+        }
+        return $this->_docConfig[$id];
     }
 
     public function getEntityManager($id) {
