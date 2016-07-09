@@ -48,6 +48,8 @@ class doctrine {
                 } else {
                     $cache = new \Doctrine\Common\Cache\ApcCache;
                 }
+            } else {
+                $cache = null;
             }
 
             $development = (isset($config['develop']) && $config['develop']) ? true : false;
@@ -63,7 +65,7 @@ class doctrine {
                 break;
             }
             $this->_docConfig[$id] = $docConfig;
-            if (isset($cache)) {
+            if (!is_null($cache)) {
                 $docConfig->setQueryCacheImpl($cache);
                 $docConfig->setMetadataCacheImpl($cache);
             }
