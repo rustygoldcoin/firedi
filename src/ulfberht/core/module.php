@@ -64,6 +64,16 @@ abstract class module {
         $this->services[$className] = new service($className, service::FACTORY_CONSTRUCTOR);
         return $this;
     }
+
+    /**
+     * Returns an Ulfberht registered service.
+     *
+     * @param $className string The class you want to instanciate.
+     * @return mixed The instanciated service.
+     */
+    public function get($className) {
+        return ulfberht()->get($className);
+    }
     
     /*
      * This method is used to invoke a public method on this object and inject it dependencies
