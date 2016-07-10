@@ -10,34 +10,42 @@
 namespace ulfberht\module;
 
 use Exception;
-use ulfberht\module\config;
+use ulfberht\module\doctrine\config;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Cache\ArrayCache;
 
+/**
+ * The purpose of this class is to provide some abstraction to doctrine itself.
+ * This object will store all doctrine entity managers.
+ */
 class doctrine {
 
-    private $_config;
-    private $_docConfig = [];
+    /**
+     * @var array This array holds all doctrine entity managers.
+     */
+    private $_doctrineEntityManagers;
 
-    private $_doctrineObjects = [];
+    /**
+     * The constructor.
+     */
+    public function __construct() {
+        $this->_doctrineEntityMangers = [];
+    }
 
-    public function __construct(config $config) {
-        $id = 'application';
-        $this->_config = $config->get('application')->doctrine;
+    /**
+     * This method is used to add an entity manager to the doctrine service.
+     *
+     * @param $id string The id you would like to store with the entity manager.
+     * @param ulfberht\module\doctrine\config $config The doctrine configuration for
+     *        the entity manager.
+     */
+    public function addEntityManager($id, config $config) {
+        $development = ($config->develop) ? true : false;
+        $cache = ($config->enableCache) ? new ArrayCache() : null;
 
-        if (!$this->_config) {
-            throw new Exception('Could not find Doctrine Config.');
-        }
-
-        $development = (isset($this->_config['develop']) && $this->_config['develop']) ? true : false;
-
-        if ($this->_config['enableCache']) {
-            $cache = new \Doctrine\Common\Cache\ArrayCache;
-        } else {
-            $cache = null;
-        }
-
-        switch ($this->_config['type']) {
+        //setup type of metadata reading
+        switch ($config->type) {
             case 'annotation':
                 $docConfig = Setup::createAnnotationMetadataConfiguration($this->_config['paths'], $development, null, $cache);
             break;
@@ -48,36 +56,51 @@ class doctrine {
                 $docConfig = Setup::createYAMLMetadataConfiguration($this->_config['paths'], $development, null, $cache);
             break;
         }
-        $this->_docConfig[$id] = $docConfig;
+        
+        //setup caching
         if (!is_null($cache)) {
             $docConfig->setQueryCacheImpl($cache);
             $docConfig->setMetadataCacheImpl($cache);
         }
 
+        //setup database connection
         $dbConnInfo = Array(
-            'driver'     =>  'pdo_mysql',
-            'host'       =>  $config->get('environment')->docker->database->host,
-            'dbname'       =>  $config->get('environment')->docker->database->name,
-            'user'       =>  $config->get('environment')->docker->database->user,
-            'password'   =>  $config->get('environment')->docker->database->password
+            'driver' =>  $config->database->driver,
+            'host' =>  $config->database->host,
+            'dbname' =>  $config->database->name,
+            'user' =>  $config->database->user,
+            'password' =>  $config->database->password
         );
 
-        $this->_doctrineObjects[$id] = EntityManager::create($dbConnInfo, $docConfig);
+        //store entity manager
+        $this->_doctrineEntityMangers[$id] = EntityManager::create($dbConnInfo, $docConfig);
     }
 
+    /**
+     * This method is used to get the doctrine config for a specific entity manager.
+     *
+     * @param $id string The entity manager id you want the config for.
+     * @return Doctrine\ORM\Configuration
+     * @exception If no entity manager found for the id given.
+     */
     public function getDotrineConfig($id) {
-        if (!isset($this->_docConfig)) {
-            throw new Exception('Could not find doctrine config object for "' .$id .'"');
-        }
-        return $this->_docConfig[$id];
-    }
-
-    public function getEntityManager($id) {
-
-        if (!isset($this->_doctrineObjects[$id])) {
+        if (!isset($this->_doctrineEntityMangers[$id])) {
             throw new Exception('Could not find entityManager "' . $id . '"');
         }
-        return $this->_doctrineObjects[$id];
+        return $this->_docConfig[$id]->getConfiguration();
+    }
+
+    /**
+     * This method is used to get an instance of an entity manager.
+     *
+     * @param $id string The entity manager id.
+     * @exception If no entity manager found for the id given.
+     */
+    public function getEntityManager($id) {
+        if (!isset($this->_doctrineEntityMangers[$id])) {
+            throw new Exception('Could not find entityManager "' . $id . '"');
+        }
+        return $this->_doctrineEntityMangers[$id];
     }
 
 }

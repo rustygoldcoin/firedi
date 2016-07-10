@@ -193,6 +193,13 @@ class ulfberht {
         ) ? true : false;
     }
 
+    /**
+     * This method is used to run all dependency checks on both modules and services and lock
+     * down the application so no more modules/services can be added. Hooks are also ran.
+     *
+     * @param $hooks array The hooks you want to run on modules.
+     * @return this
+     */
     public function forge($hooks = null) {
         //set hooks
         if ($hooks && is_array($hooks)) {
@@ -228,14 +235,28 @@ class ulfberht {
         return $this;
     }
 
+    /**
+     * Returns if ulfberht has already been forged.
+     *
+     * @return boolean
+     */
     public function isForged() {
         return $this->_forged;
     }
 
+    /**
+     * Kill the ulfberht instance.
+     */
     public function destroy() {
         self::$_ulfberht = null;
     }
 
+    /**
+     * This method is used to resolve a service and all of its dependencies.
+     *
+     * @param $className The classname of the service you would like to resolve.
+     * @return mixed The resolved service.
+     */
     private function _resolveService($className) {
         $serviceDependencies = $this->_serviceDependencyErrorCheck($className);
         if (empty($serviceDependencies)) {
@@ -250,6 +271,9 @@ class ulfberht {
         }
     }
 
+    /**
+     * This method is used to instanciate a service based on its instanciation plan.
+     */
     private function _instanciateService($className, $resolvedDependencies) {
         $serviceModule = $this->_serviceModuleMap[$className];
         $module = $this->getModule($serviceModule);
