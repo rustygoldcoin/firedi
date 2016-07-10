@@ -29,7 +29,7 @@ class config {
     public function __construct() {
         $this->develop = true;
         $this->enableCache = false;
-        $this->$type = self::METADATA_TYPE_ANNOTATION;
+        $this->type = self::METADATA_TYPE_ANNOTATION;
         $this->paths = [];
         $this->database = (object) [
             'driver' => 'pdo_mysql',
