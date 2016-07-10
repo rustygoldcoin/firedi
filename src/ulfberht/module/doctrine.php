@@ -47,13 +47,13 @@ class doctrine {
         //setup type of metadata reading
         switch ($config->type) {
             case 'annotation':
-                $docConfig = Setup::createAnnotationMetadataConfiguration($this->_config['paths'], $development, null, $cache);
+                $docConfig = Setup::createAnnotationMetadataConfiguration($config->paths, $development, null, $cache);
             break;
             case 'xml':
-                $docConfig = Setup::createXMLMetadataConfiguration($this->_config['paths'], $development, null, $cache);
+                $docConfig = Setup::createXMLMetadataConfiguration($config->paths, $development, null, $cache);
             break;
             case 'yaml':
-                $docConfig = Setup::createYAMLMetadataConfiguration($this->_config['paths'], $development, null, $cache);
+                $docConfig = Setup::createYAMLMetadataConfiguration($config->paths, $development, null, $cache);
             break;
         }
         
