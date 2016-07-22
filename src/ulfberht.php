@@ -17,8 +17,3 @@ function ulfberht($module = null) {
     }
     return ulfberht\core\ulfberht::getInstance();
 }
-
-/**
- * register the ulfberht\module module
- */
-ulfberht()->registerModule('ulfberht\module');
