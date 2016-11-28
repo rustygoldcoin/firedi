@@ -1,39 +1,38 @@
-#Ulfberht Dependency Injection MVC
+#Ulfberht - PHP Dependency Injection (DI)
 
-Ulfberht was named after a Viking sword found to be the lightest and strongest sword of its time.
+This PHP DI Tool was named after a Viking Sword called "The Ulfberht". "The Ulfberht" was found to be the lightest and strongest weapon of its time. The development of this tool was modeled after the same principles that were implemented during the construction of the Ulfberht Sword. Simply put, be the lightest and strongest tool ever created to fight against the evils  of dependency mapping that live deep within our PHP applications.
 
-Ulfberht is a lightweight and powerful PHP Dependency Injection Container plus MVC framework. At its core, Ulfberht was developed around the ideas of Service Based Dependency Injection and Modularization. As it turns out, following this pattern gives us the flexibility to create modules that can support any architectural design and provide the base foundation for any application. Ulfberht ships with a basic MVC Module (ulfberht\module\ulfberht) which provides Config, Router, View, Request, and Response objects used to build out full MVC applications.
+Features:
+
+* Automatic constructor based dependency resolution
+* Circular dependency validation
+* Supports both `factory` and `singleton` construction patterns
 
 ###Install Ulfberht Using Composer:
 
-`ua1-labs/ulfberht:dev-master`
+`composer require ua1-labs/ulfberht`
 
-###Quick Start:
+###Getting Started:
 
-1) Register a module and services using `ulfberht\core\module`:
+1) Ulfberht is a true singleton class and can be accessed in two different ways:
 
-    use ulfberht\core\module;
+    $ulfberht = ulfberht\core\ulfberht::instance();
 
-    class myModule extends module {
+or
 
-        public function __construct() {
-            //when this object builds it will create a new object every time.
-            $this->registerFactory('A');
-            //when this object builds it will return a cached version of the object.
-            $this->registerSingleton('B');
-        }
+    $uflberht = ulfberht();
 
-        public function configHook(A $a) {
-            //executed during the config process of ulfberht::forge();
-        }
+2) Registering a class to be used by Ulfberht:
 
-        public function runHook(A $a, B $b) {
-            //executed during the run process of the ulfbhert::forge();            
-        }
-    }
+    //registering a class as a singleton constructor type
+    ulfberht()->singleton('stdClass');
 
-    //register the module with ulfberht
-    ulfberht()->registerModule('myModule');
+    //registering a class as a factory constructor type
+    ulfberht()->factory('stdClass');
+
+3) Get constructed object from Ulfberht:
+
+    $object = ulfberht()->get('stdClass');
 
 ---
 

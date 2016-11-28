@@ -21,5 +21,8 @@
         "psr-4": {
             "ulfberht\\": "src/ulfberht/"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --coverage-html tests/coverage"
     }
 }

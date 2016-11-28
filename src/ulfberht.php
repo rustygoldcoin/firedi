@@ -9,8 +9,8 @@
 
 /**
  * Returns the ulfberht singleton or module object based on what is passed in.
- * @return mixed Module or Ulfberht object
+ * @return mixed Ulfberht object
  */
-function ulfberht($service = null) {
+function ulfberht() {
     return ulfberht\core\ulfberht::instance();
 }
