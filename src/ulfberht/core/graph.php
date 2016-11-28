@@ -21,7 +21,6 @@ class graph {
     /**
      * This array is filled with dependencies that have been resolved during the
      * dependency check that is done when you run ::runDependencyCheck()
-     *
      * @var array
      */
     protected $_resolved;
@@ -29,7 +28,6 @@ class graph {
     /**
      * This array is filled with dependencies that have yet to be resolved during
      * the dependency check that is done when you run ::runDependencyCheck().
-     *
      * @var array
      */
     protected $_unresolved;
@@ -37,7 +35,6 @@ class graph {
     /**
      * This array contains a list of resources and dependencies and is modeled
      * using a graph technique.
-     *
      * @var array
      */
     protected $_resourceGraph;
@@ -58,7 +55,6 @@ class graph {
 
     /**
      * This method is used to add a resource to the dependecy graph.
-     *
      * @param string $resourse_id A unique ID that identifies a resource
      * @return
      */
@@ -70,7 +66,6 @@ class graph {
     /**
      * This method is used to determine if a resourse exists within the
      * dependency graph.
-     *
      * @param string $resource The unique ID that identifies the resource you
      * are targeting.
      * @return boolean
@@ -85,7 +80,6 @@ class graph {
 
     /**
      * This method is used to add multiple dependencies to a resource.
-     *
      * @param string $resourceId A unique ID that repesents the resource you
      * want to add dependencies to.
      * @param array $dependencies An array that contains the dependencies you want
@@ -99,7 +93,6 @@ class graph {
 
     /**
      * This method is used to add a single dependency to a resource.
-     *
      * @param string $resourceId A unique ID that repesents the resource you
      * want to add dependency to.
      * @param string $dependency A var that contains the dependency you want
@@ -113,7 +106,6 @@ class graph {
 
     /**
      * This method will return an array of the dependencies a resource has.
-     *
      * @param string $resourceId A unique ID of the resource you would like to
      * get the dependencies of
      * @return array The dependencies of the resource.
@@ -128,7 +120,6 @@ class graph {
      * any errors, this method will not stop processing. To check for errors,
      * you will need to run the self::getDependencyError() method. To reset
      * the dependency check use the self::resetDependencyCheck() method.
-     *
      * @param string $resource The unique ID of the resource you would like to
      * run the dependency check on.
      */
@@ -147,7 +138,6 @@ class graph {
      * that have to be resolved in order to achieve proper dependency resolution.
      * The contents of the array have been ordered by which depedencies should
      * be resolved first.
-     *
      * @return array This array will contain the order in which the dependencies
      * should be resolved in order to achieve proper dependency resolutions.
      */
@@ -176,13 +166,13 @@ class graph {
             'resourceId' => false,
             'description' => 'Resource Not Found'
         ];
-        
+
         $error2 = (object) [
             'code' => 2,
             'resourceId' => false,
             'description' => 'Circular Dependency Detected'
         ];
-        
+
         $this->_errorCodes = [
             1 => $error1,
             2 => $error2
@@ -191,7 +181,6 @@ class graph {
 
     /**
      * This method returns an error object based on the code sets the resourceId.
-     *
      * @param $code interger The error code you would like the associate with the error.
      * @param $resourceId string The resourceId identified that caused the error.
      * @return object The error object that represents the runtime error.
@@ -205,7 +194,6 @@ class graph {
 
     /**
      * This method is used to check to see if a resource exist in the graph object.
-     *
      * @param resourceId The resourceId you would like to check.$_COOKIE
      * @return mixed Null if resourceId is found. Error object if resource not found.
      */
@@ -218,7 +206,6 @@ class graph {
     /**
      * This method checks a resource and its dependencies for any situations where
      * there is a case that causes the dependnecy to be not resolvable.
-     *
      * @param string The resource you would like to run the check for.
      * @return mixed Null if no error. Error object if it finds an error.
      */
