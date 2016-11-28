@@ -4,9 +4,10 @@ This PHP DI Tool was named after a Viking Sword called "The Ulfberht". "The Ulfb
 
 Features:
 
-* Automatic constructor based dependency resolution
+* Automatic dependency resolution
 * Circular dependency validation
-* Supports both `factory` and `singleton` construction patterns
+* Supports both `factory` and `singleton` construct patterns
+* No anonymous functions =)
 
 ###Install Ulfberht Using Composer:
 
@@ -36,7 +37,7 @@ or
 
 ---
 
-###Automatic Dependency Injection:
+###Automatic Dependency Resolution:
 
 If you have one service that depends on another, ulfberht can automatically inject those services for you:
 
