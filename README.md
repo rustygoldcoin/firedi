@@ -73,6 +73,20 @@ Will result in:
         public $dep2 => class ClassC#13 (0) {}
     }
 
+**Detecting Circular Dependencies**
+
+Whenever you request an instance object a registered class from Ulfberht, Ulfberht does a circular dependency check to ensure that non of your dependencies for the given class. If a circular dependency exists, this creates a infinite logic loop which results in a instance object that cannot be resolved. So if `A` => `B` => `C` => `A`. Because `A` depends on `C` and `C` depends on `A` we have a circular dependency and it cannot be resolved. When Ulfberht detects a circular dependency, Ulfberht will throw an Exception.
+
+### Construct Patterns - Factory Vs. Singleton:
+
+When registering a class with Ulfberht, you have to consider whether you want to register the class as a Factory `ulfberht::factory()` or Singleton `ulfberht::singleton()` construct type. When trying to determine which construct type to use you should answer two questions.
+
+1. Do I need a new instance of an object returned every time I get it from Ulfberht? - Use Factory.
+2. Do I need a the same instance of an object returned every time I get it from Ulfberht? - Use Singleton.
+
+### Library API Documentation
+
+API Docs Available soon.
 
 ### License:
 
