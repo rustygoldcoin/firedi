@@ -1,19 +1,19 @@
-#Ulfberht - PHP Dependency Injection (DI)
+# Ulfberht - PHP Dependency Injection (DI)
 
 This PHP DI Tool was named after a Viking Sword called "The Ulfberht". "The Ulfberht" was found to be the lightest and strongest weapon of its time. The development of this tool was modeled after the same principles that were implemented during the construction of the Ulfberht Sword. Simply put, be the lightest and strongest tool ever created to fight against the evils  of dependency mapping that live deep within our PHP applications.
 
 Features:
 
-* Automatic dependency resolution
-* Circular dependency validation
+* Automated dependency resolution
+* Circular dependency detection
 * Supports both `factory` and `singleton` construct patterns
-* No anonymous functions =)
+* No more anonymous functions for creating factories =)
 
-###Install Ulfberht Using Composer:
+### Install Ulfberht Using Composer:
 
 `composer require ua1-labs/ulfberht`
 
-###Getting Started:
+### Getting Started:
 
 1) Ulfberht is a true singleton class and can be accessed in two different ways:
 
@@ -37,31 +37,43 @@ or
 
 ---
 
-###Automatic Dependency Resolution:
+### Automatic Dependency Resolution:
 
-If you have one service that depends on another, ulfberht can automatically inject those services for you:
+The whole reason Ulfberht exists is to manage and resolve dependencies for you. to be able to have all class dependencies resolved for you automatically. The Dependency Injection design pattern provides you with the ability to decouple class dependencies across your entire application by resolving these dependencies for you.
 
-Service `A` depends on `B`
+**How It Works**
 
-    //When A is constructed, B will construct first and be passed into
-    //A as part of the service resolution process.
-    class A {
-        public function __construct(B $b) {
-            var_dump($b);
+Whenever you register a new dependency class with Ulfberht, Ulfberht will take a look at your class constructor and determine class dependencies by the type hints you define on each parameter you require. Ulfberht then keeps track of these dependencies and attempts to resolve these when you request the instance object from Ulfberht using `ulfbhert\core\ulfberht::get()`. For Example:
+
+    class ClassA {
+
+        public function __construct(ClassB $dep1, ClassC $dep2) {
+            $this->dep1 = $dep1;
+            $this->dep2 = $dep2;
         }
+
     }
 
----
+Assuming that `ClassA`, `ClassB`, and `ClassC` was registered with Ulfberht, like so:
 
-You can also retrieve a service once you have forged your application with `ulfberht::forge()`
+    ulfberht()
+        ->factory('ClassA')
+        ->factory('ClassB')
+        ->factory('ClassC');
 
-    //forging ulfberht
-    ulfberht()->forge();
-    //get constructed service
-    $a = ulfberht()->get('A');
+Notice in the example above, `ClassA` expects an instance of `ClassB` to be passed in as the first paramater and an instance of `ClassC` passed in as the second parameter. As described above, when you registered `ClassA` with Ulfberht, the framework already determined that `ClassB` and `ClassC` are dependencies of `ClassA`. So, when you go to ask Ulfberht to resolve `ClassA` it already knows that `ClassB` and `ClassC` need to be resolved first and passed into `ClassA`.
 
-**More and Better Coming Soon!**
+    $ClassA = ulfberht()->get('ClassA');
+    var_dump($ClassA);
 
-###License:
+Will result in:
+
+    class ClassA#14 (2) {
+        public $dep1 => class ClassB#11 (0) {}
+        public $dep2 => class ClassC#13 (0) {}
+    }
+
+
+### License:
 
 MIT license - http://www.opensource.org/licenses/mit-license.php
