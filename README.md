@@ -86,7 +86,24 @@ When registering a class with Ulfberht, you have to consider whether you want to
 
 ### Library API Documentation
 
-API Docs Available soon.
+*class ulfberht\core\ulfberht*
+
+* **ulfbhert::instance()** Gets the singleton instance of this class.
+    * returns - ulfberht\core\ulfberht - The ulfberht instance object
+* **ulfberht::singleton($className)** This method is used to define a service that returns a singleton instance of the service that was defined.
+    * $className - The name of the class you would like to register
+    * returns - ulfberht\core\ulfberht - The ulfberht instance object
+* **ulfberht::factory($className)** This method is used to define a service that returns a new instance of the service that was defined everytime it is called.
+    * $className - The name of the class you would like to register
+    * returns - ulfberht\core\ulfberht - The ulfberht instance object
+* **ulfberht::get($className)**
+    * $className - The name of the class you would like to register
+    * returns - object - an instance of the class you requested
+* **ulfberht::has($className)**  This method is used to check to see if a class has been registered to be used with ulfberht.
+    * $className - The name of the class you would like to register
+    * returns - boolean
+* **ulfberht::destroy()** Destroy the ulfberht instance.
+    returns - void
 
 ### License:
 
