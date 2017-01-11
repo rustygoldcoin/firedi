@@ -1,6 +1,6 @@
 # Ulfberht - PHP Dependency Injection (DI)
 
-This PHP DI Tool was named after a Viking Sword called "The Ulfberht". "The Ulfberht" was found to be the lightest and strongest weapon of its time. The development of this tool was modeled after the same principles that were implemented during the construction of the Ulfberht Sword. Simply put, be the lightest and strongest tool ever created to fight against the evils  of dependency mapping that live deep within our PHP applications.
+This PHP DI Tool was named after a Viking Sword called "The Ulfberht". "The Ulfberht" was found to be the lightest and strongest weapon of its time. The development of this tool was modeled after the same principles that were implemented during the construction of the Ulfberht Sword. Simply put, be the lightest and strongest tool ever created to fight against the evils of dependency mapping that live deep within our PHP applications.
 
 Features:
 
@@ -15,25 +15,22 @@ Features:
 
 ### Getting Started:
 
-1) Ulfberht is a true singleton class and can be accessed in two different ways:
+1) Create a new Ulfberht container:
 
-    $ulfberht = ulfberht\core\ulfberht::instance();
+    $ulfberht = new ulfberht\core\ulfberht();
 
-or
-
-    $uflberht = ulfberht();
 
 2) Registering a class to be used by Ulfberht:
 
     //registering a class as a singleton constructor type
-    ulfberht()->singleton('stdClass');
+    $ulfberht->singleton('stdClass');
 
     //registering a class as a factory constructor type
-    ulfberht()->factory('stdClass');
+    $ulfberht->factory('stdClass');
 
 3) Get constructed object from Ulfberht:
 
-    $object = ulfberht()->get('stdClass');
+    $object = $ulfberht->get('stdClass');
 
 ---
 
@@ -56,14 +53,14 @@ Whenever you register a new dependency class with Ulfberht, Ulfberht will take a
 
 Assuming that `ClassA`, `ClassB`, and `ClassC` was registered with Ulfberht, like so:
 
-    ulfberht()
+    $ulfberht
         ->factory('ClassA')
         ->factory('ClassB')
         ->factory('ClassC');
 
 Notice in the example above, `ClassA` expects an instance of `ClassB` to be passed in as the first paramater and an instance of `ClassC` passed in as the second parameter. As described above, when you registered `ClassA` with Ulfberht, the framework already determined that `ClassB` and `ClassC` are dependencies of `ClassA`. So, when you go to ask Ulfberht to resolve `ClassA` it already knows that `ClassB` and `ClassC` need to be resolved first and passed into `ClassA`.
 
-    $ClassA = ulfberht()->get('ClassA');
+    $ClassA = $ulfberht->get('ClassA');
     var_dump($ClassA);
 
 Will result in:
@@ -88,9 +85,6 @@ When registering a class with Ulfberht, you have to consider whether you want to
 
 *class ulfberht\core\ulfberht*
 
-* **ulfbhert::instance()** Gets the singleton instance of this class.
-    * returns - ulfberht\core\ulfberht - The ulfberht instance object
-
 * **ulfberht::singleton($className)** This method is used to define a service that returns a singleton instance of the service that was defined.
     * $className - The name of the class you would like to register
     * returns - ulfberht\core\ulfberht - The ulfberht instance object
@@ -106,9 +100,6 @@ When registering a class with Ulfberht, you have to consider whether you want to
 * **ulfberht::has($className)**  This method is used to check to see if a class has been registered to be used with ulfberht.
     * $className - The name of the class you would like to register
     * returns - boolean
-
-* **ulfberht::destroy()** Destroy the ulfberht instance.
-    * returns - void
 
 ### License:
 
