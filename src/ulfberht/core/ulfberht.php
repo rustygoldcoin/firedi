@@ -33,12 +33,6 @@ class ulfberht {
         . ' could not be found.';
 
     /**
-     * The ulfberht instance object.
-     * @var object
-     */
-    private static $_ulfberht;
-
-    /**
      * An array that stores all service definitions.
      * @var array
      */
@@ -61,21 +55,10 @@ class ulfberht {
     /**
      * The constructor.
      */
-    private function __construct() {
+    public function __construct() {
         $this->_services = [];
         $this->_serviceCache = [];
         $this->_serviceDependencyGraph = new graph();
-    }
-
-    /**
-     * Gets the singleton instance of this class.
-     * @return object uflberht\core\ulfberht
-     */
-    public static function instance() {
-        if (!isset(self::$_ulfberht) || !(self::$_ulfberht)) {
-            self::$_ulfberht = new self();
-        }
-        return self::$_ulfberht;
     }
 
     /**
@@ -127,14 +110,6 @@ class ulfberht {
      */
     public function has($className) {
         return isset($this->_services[$className]);
-    }
-
-    /**
-     * Destroy the ulfberht instance.
-     * @return void
-     */
-    public function destroy() {
-        self::$_ulfberht = null;
     }
 
     /**
@@ -213,7 +188,7 @@ class ulfberht {
                     break;
             }
         } else {
-            $resolveOrder = $this->_serviceDependencyGraph->getDependencies($className);
+            $resolveOrder = $this->_serviceDependencyGraph->getDependencyResolveOrder($className);
             $this->_serviceDependencyGraph->resetDepenencyCheck();
             return $resolveOrder;
         }

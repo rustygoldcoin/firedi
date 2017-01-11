@@ -54,7 +54,7 @@ class ulfberhtTest extends TestCase {
      * @return void
      */
     public function setUp() {
-        $this->ulfberht = ulfberht()->instance();
+        $this->ulfberht = new ulfberht();
     }
 
     /**
@@ -62,7 +62,7 @@ class ulfberhtTest extends TestCase {
      * @return void
      */
     public function tearDown() {
-        ulfberht()->destroy();
+        //ulfberht()->destroy();
     }
 
     /**

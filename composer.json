@@ -15,9 +15,6 @@
         "phpunit/phpunit": "^5.6"
     },
     "autoload": {
-        "files": [
-            "src/ulfberht.php"
-        ],
         "psr-4": {
             "ulfberht\\": "src/ulfberht/"
         }
