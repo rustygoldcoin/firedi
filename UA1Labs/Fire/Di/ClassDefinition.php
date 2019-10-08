@@ -1,24 +1,26 @@
 <?php
+
 /**
- * @package ulfberht
- * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://ua1.us
- * @copyright Copyright 2016, Joshua L. Johnson
- * @license MIT
+ *    __  _____   ___   __          __
+ *   / / / /   | <  /  / /   ____ _/ /_  _____
+ *  / / / / /| | / /  / /   / __ `/ __ `/ ___/
+ * / /_/ / ___ |/ /  / /___/ /_/ / /_/ (__  )
+ * `____/_/  |_/_/  /_____/`__,_/_.___/____/
+ *
+ * @package FireDI
+ * @author UA1 Labs Developers https://ua1.us
+ * @copyright Copyright (c) UA1 Labs
  */
 
-namespace ulfberht\core;
+namespace UA1Labs\Fire\Di;
 
 use ReflectionClass;
-use ulfberht\core\ulfberhtException;
+use UA1Labs\Fire\DiException;
 
 /**
  * This class defines a service to register to ulfberht.
  */
-class serviceWrapper {
-
-    const FACTORY_CONSTRUCTOR = 'factory';
-    const SINGLETON_CONSTRUCTOR = 'singleton';
+class ClassDefinition {
 
     /**
      * The ID of the service
@@ -30,13 +32,6 @@ class serviceWrapper {
      * @var ReflectionClass
      */
     public $classDef;
-
-    /**
-     * The build type of this particular service. Currently, you have two
-     * build types that is supported by ulfberht. A 'singleton' and a 'factory'
-     * @var string
-     */
-    public $constructorType;
 
     /**
      * An array that stores the names of the variables defined in the $closure.
@@ -54,9 +49,8 @@ class serviceWrapper {
      * @param string $constructorType The type of constructor to use when you
      * instaniate the service.
      */
-    public function __construct($className, $constructorType) {
+    public function __construct($className) {
         $this->serviceId = $className;
-        $this->constructorType = $constructorType;
         $this->classDef = new ReflectionClass($className);
         $this->dependencies = [];
 

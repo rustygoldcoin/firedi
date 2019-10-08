@@ -20,11 +20,16 @@
         "dependency injector"
     ],
     "type": "library",
-    "scripts": {},
-    "require": {},
+    "scripts": {
+        "test": "php vendor/ua1-labs/firetest/scripts/runner.php --dir=UA1Labs --ext=.Test.php"
+    },
+    "require": {
+        "ua1-labs/firetest": "^1.1",
+        "ua1-labs/firebug": "^1.8"
+    },
     "autoload": {
         "psr-4": {
-            "Fire\\": "Fire/"
+            "UA1Labs\\": "UA1Labs/"
         }
     }
 }
