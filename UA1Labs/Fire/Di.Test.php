@@ -20,32 +20,41 @@ use UA1Labs\Fire\Di;
 class DiTest extends TestCase
 {
     /**
-     * Undocumented variable
+     * The FireDi
      *
-     * @var [type]
+     * @var Di
      */
-    private $_di;
+    private $_fireDi;
 
     public function beforeEach()
     {
-        $this->_di = new Di();
+        $this->_fireDi = new Di();
     }
 
     public function afterEach()
     {
-        unset($this->_di);
+        unset($this->_fireDi);
     }
 
     public function testConstructor()
     {
         $this
-            ->should('Should not throw an execption and be an instance of Di')
-            ->assert($this->_di instanceof Di);
+            ->should('The constructor should not throw an execption and be an instance of Di.')
+            ->assert($this->_fireDi instanceof Di);
     }
 
-    public function testPut()
+    public function testPutObject()
     {
+        $this->should('Should put an object in the cache without an exception.');
+        $this->_fireDi->put('TestObject', []);
+        $this->assert(true);
 
+        $this->should('The object cache should contain a key "TestObject"');
+        $objectCache = $this->_fireDi->getObjectCache();
+        $this->assert(isset($objectCache['TestObject']));
+
+        $this->should('The "TestObject" in object cache should be an array');
+        $this->assert(is_array($objectCache['TestObject']));
     }
 }
 

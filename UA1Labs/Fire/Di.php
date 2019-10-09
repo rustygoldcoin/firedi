@@ -103,6 +103,26 @@ class Di {
     }
 
     /**
+     * Returns the entire object cache.
+     *
+     * @return array<mixed>
+     */
+    public function getObjectCache()
+    {
+        return $this->_objectCache;
+    }
+
+    /**
+     * Clears the object cache.
+     *
+     * @return void
+     */
+    public function clearObjectCache()
+    {
+        $this->_objectCache = [];
+    }
+
+    /**
      * Determines if a object already has been cached for the given class.
      *
      * @return boolean
@@ -226,7 +246,7 @@ class Di {
      * are any circular dependencies.
      *
      * @param string $classname The class you are checking dependencies for
-     * @return array The order we need to resolve dependencies
+     * @return array<string> The order we need to resolve dependencies
      */
     private function _instanceObjectDependencyErrorCheck($classname)
     {
