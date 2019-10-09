@@ -99,6 +99,12 @@ class Di {
      */
     public function getWith($classname, $dependencies)
     {
+        // if the class doesn't have a class definition we should attempt
+        // to register the class definition
+        if (!$this->_isClassDefinitionRegistered($classname)) {
+            $this->_registerClassDefinition($classname);
+        }
+
         return $this->_instanciateClass($classname, $dependencies);
     }
 
@@ -167,7 +173,7 @@ class Di {
      */
     private function _isClassDefinitionRegistered($classname)
     {
-        return $this->_classDefinitions[$classname];
+        return isset($this->_classDefinitions[$classname]);
     }
 
     /**
@@ -227,17 +233,31 @@ class Di {
             $this->_registerClassDefinition($classname);
         }
 
-        // get the instance object dependencies and resolve those
-        $instanceObjectDependencies = $this->_instanceObjectDependencyErrorCheck($classname);
-        if (empty($instanceObjectDependencies)) {
-            return $this->_instanciateClass($classname, [], true);
-        } else {
-            $di = [];
-            foreach ($instanceObjectDependencies as $dependency) {
-                //set $di[] with all dependencies and invoke
-                $di[] = $this->_resolveInstanceObject($dependency);
+        // recursively register dependency class definitions
+        $this->_registerDependentClassDefinitions($classname);
+
+        // run circular and missing dependency error checks
+        $this->_instanceObjectDependencyErrorCheck($classname);
+
+        $classDefinition = $this->_getClassDefinition($classname);
+        $dependencies = $classDefinition->dependencies;
+
+        $di = [];
+        foreach ($dependencies as $dependency) {
+            //set $di[] with all dependencies and invoke
+            $di[] = $this->_resolveInstanceObject($dependency);
+        }
+        return $this->_instanciateClass($classname, $di, true);
+    }
+
+    private function _registerDependentClassDefinitions($classname)
+    {
+        $classDefinition = $this->_getClassDefinition($classname);
+        foreach ($classDefinition->dependencies as $dependency) {
+            if (!$this->_isClassDefinitionRegistered($dependency)) {
+                $this->_registerClassDefinition($dependency);
             }
-            return $this->_instanciateClass($classname, $di, true);
+            $this->_registerDependentClassDefinitions($dependency);
         }
     }
 
