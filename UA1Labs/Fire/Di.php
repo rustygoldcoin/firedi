@@ -23,7 +23,8 @@ use UA1Labs\Fire\DiException;
  * The Di class is what makes dependency injection possible. This class handles the
  * entire dependency injection environment.
  */
-class Di {
+class Di
+{
 
     const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot'
         . ' be registered with FireDI.';
@@ -236,9 +237,6 @@ class Di {
         // recursively register dependency class definitions
         $this->_registerDependentClassDefinitions($classname);
 
-        // run circular and missing dependency error checks
-        $this->_instanceObjectDependencyErrorCheck($classname);
-
         $classDefinition = $this->_getClassDefinition($classname);
         $dependencies = $classDefinition->dependencies;
 
@@ -250,6 +248,16 @@ class Di {
         return $this->_instanciateClass($classname, $di, true);
     }
 
+    /**
+     * Runs through a class's dependencies and ensures that each dependency
+     * has been registered as both a class definition and a resource in the
+     * dependency graph. As a note, this is a recursive function and we do a
+     * circular dependency error check before we start to register any of the
+     * current class's depenencies to ensure we don't end up in an infinite loop.
+     *
+     * @param string $classname The class you would like to register the dependencies for.
+     * @return void
+     */
     private function _registerDependentClassDefinitions($classname)
     {
         $classDefinition = $this->_getClassDefinition($classname);
@@ -257,6 +265,7 @@ class Di {
             if (!$this->_isClassDefinitionRegistered($dependency)) {
                 $this->_registerClassDefinition($dependency);
             }
+            $this->_circularDependencyErrorCheck($classname);
             $this->_registerDependentClassDefinitions($dependency);
         }
     }
@@ -268,25 +277,19 @@ class Di {
      * @param string $classname The class you are checking dependencies for
      * @return array<string> The order we need to resolve dependencies
      */
-    private function _instanceObjectDependencyErrorCheck($classname)
+    private function _circularDependencyErrorCheck($classname)
     {
         $error = $this->_classDependencyGraph->runDependencyCheck($classname);
         if ($error) {
             switch ($error->code) {
-                case 1:
-                    $errorMessage = sprintf(self::ERROR_DEPENDENCY_NOT_FOUND, $classname, $error->resourceId);
-                    throw new DiException($errorMessage);
-                    break;
                 case 2:
                     $errorMessage = sprintf(self::ERROR_CIRCULAR_DEPENDENCY, $classname, $error->resourceId);
                     throw new DiException($errorMessage);
                     break;
             }
-        } else {
-            $resolveOrder = $this->_classDependencyGraph->getDependencyResolveOrder($classname);
-            $this->_classDependencyGraph->resetDepenencyCheck();
-            return $resolveOrder;
         }
+
+        $this->_classDependencyGraph->resetDepenencyCheck();
     }
 
     /**

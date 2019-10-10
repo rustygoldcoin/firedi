@@ -21,7 +21,7 @@
     ],
     "type": "library",
     "scripts": {
-        "test": "php vendor/ua1-labs/firetest/scripts/runner.php --dir=UA1Labs --ext=.Test.php"
+        "test": "php vendor/ua1-labs/firetest/scripts/runner.php --dir=UA1Labs --ext=.TestCase.php"
     },
     "require": {
         "ua1-labs/firetest": "^1.1",

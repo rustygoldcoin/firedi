@@ -17,7 +17,7 @@ namespace UA1Labs\Fire;
 use Exception;
 
 /**
- * Exception thrown from the FireTest library.
+ * Exception thrown from the FireDI library.
  */
 class DiException extends Exception
 {

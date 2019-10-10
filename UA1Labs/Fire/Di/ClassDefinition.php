@@ -18,17 +18,21 @@ use ReflectionClass;
 use UA1Labs\Fire\DiException;
 
 /**
- * This class defines a service to register to ulfberht.
+ * This class is meant to wrap a class being registered with FireDI.
  */
-class ClassDefinition {
+class ClassDefinition
+{
 
     /**
      * The ID of the service
+     *
+     * @var string
      */
     public $serviceId;
 
     /**
      * A reflection object that defines this particular service.
+     *
      * @var ReflectionClass
      */
     public $classDef;
@@ -37,7 +41,8 @@ class ClassDefinition {
      * An array that stores the names of the variables defined in the $closure.
      * The names of the variables of the $closure defines what services this
      * service depends on.
-     * @var array
+     *
+     * @var array<string>
      */
     public $dependencies;
 
@@ -45,11 +50,12 @@ class ClassDefinition {
      * The constructor sets up the service object to be stored until zulfberht
      * determines that the service should be relocated into the ulfberht
      * runtime environment.
+     *
      * @param string $className The class you would like to wrap in an ulfberhtservice.
-     * @param string $constructorType The type of constructor to use when you
-     * instaniate the service.
+     * @return void
      */
-    public function __construct($className) {
+    public function __construct($className)
+    {
         $this->serviceId = $className;
         $this->classDef = new ReflectionClass($className);
         $this->dependencies = [];

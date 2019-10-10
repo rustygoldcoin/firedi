@@ -19,7 +19,7 @@ use UA1Labs\Fire\Di;
 use UA1Labs\Fire\DiException;
 use Throwable;
 
-class DiTest extends TestCase
+class DiTestCase extends TestCase
 {
     /**
      * The FireDi
@@ -60,6 +60,48 @@ class DiTest extends TestCase
         $this->should('Resolve all dependencies for TestClassA and return the TestClassA object.');
         $testClassA = $this->_fireDi->get('Test\UA1Labs\Fire\TestClassA');
         $this->assert($testClassA instanceof TestClassA);
+
+        $this->should('Have placed TestClassA, TestClassB, and TestClassC within the object cache.');
+        $objectCache = $this->_fireDi->getObjectCache();
+        $this->assert(
+            isset($objectCache['Test\UA1Labs\Fire\TestClassA'])
+            && isset($objectCache['Test\UA1Labs\Fire\TestClassB'])
+            && isset($objectCache['Test\UA1Labs\Fire\TestClassC'])
+            && $objectCache['Test\UA1Labs\Fire\TestClassA'] instanceof TestClassA
+            && $objectCache['Test\UA1Labs\Fire\TestClassB'] instanceof TestClassB
+            && $objectCache['Test\UA1Labs\Fire\TestClassC'] instanceof TestClassC
+        );
+
+        $this->_fireDi->clearObjectCache();
+
+        $this->should('Resolve all dependencies for TestClassD and return it.');
+        $testClassD = $this->_fireDi->get('Test\UA1Labs\Fire\TestClassD');
+        $this->assert($testClassD instanceof TestClassD);
+
+        $this->should('Have set ::A as TestClassA on TestClassD object.');
+        $this->assert(isset($testClassD->A) && $testClassD->A instanceof TestClassA);
+
+        $this->should('Have set ::B as TestClassB on TestClassD object.');
+        $this->assert(isset($testClassD->B) && $testClassD->B instanceof TestClassB);
+
+        $this->should('Have set ::C as TestClassC on TestClassB.');
+        $this->assert(isset($testClassD->B->C) && $testClassD->B->C instanceof TestClassC);
+
+        $this->should('Throw an exception if a the class you are trying to get does not exists.');
+        try {
+            $this->_fireDi->get('UndefinedClass');
+            $this->assert(false);
+        } catch (Throwable $e) {
+            $this->assert(true);
+        }
+
+        $this->should('Throw an exception if a circular dependency is detected.');
+        try {
+            $this->_fireDi->get('Test\UA1Labs\Fire\TestClassAA');
+            $this->assert(false);
+        } catch (Throwable $e) {
+            $this->assert(true);
+        }
     }
 
     public function testGetWithObject()
@@ -119,12 +161,12 @@ class DiTest extends TestCase
 /**
  * Test classes for testing dependency injection
  */
-Class TestClassA
+class TestClassA
 {
     public function __construct(TestClassB $B) {}
 }
 
-Class TestClassB
+class TestClassB
 {
     public $C;
 
@@ -133,12 +175,26 @@ Class TestClassB
     }
 }
 
-Class TestClassC
+class TestClassC
 {
 
 }
 
-Class TestClassD
+class TestClassD
 {
-    public function __construct(TestClassA $A, TestClassB $B) {}
+    public $A;
+    public $B;
+
+    public function __construct(TestClassA $A, TestClassB $B) {
+        $this->A = $A;
+        $this->B = $B;
+    }
+}
+
+class TestClassAA {
+    public function __construct(TestClassBB $BB) {}
+}
+
+class TestClassBB {
+    public function __construct(TestClassAA $AA) {}
 }
