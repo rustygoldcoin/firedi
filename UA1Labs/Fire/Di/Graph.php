@@ -30,7 +30,7 @@ class Graph
      *
      * @var array<string>
      */
-    protected $_resolved;
+    private $_resolved;
 
     /**
      * This array is filled with dependencies that have yet to be resolved during
@@ -38,7 +38,7 @@ class Graph
      *
      * @var array<string>
      */
-    protected $_unresolved;
+    private $_unresolved;
 
     /**
      * This array contains a list of resources and dependencies and is modeled
@@ -46,7 +46,7 @@ class Graph
      *
      * @var array<string>
      */
-    protected $_resourceGraph;
+    private $_resourceGraph;
 
     /**
      * Contains an error code configuration for determining which
@@ -54,7 +54,7 @@ class Graph
      *
      * @var array<object>
      */
-    protected $_errorCodes;
+    private $_errorCodes;
 
     /**
      * The class constructor.
@@ -90,11 +90,7 @@ class Graph
      */
     public function isResource($resource)
     {
-        if (isset($this->_resourceGraph[$resource])) {
-            return true;
-        }
-
-        return false;
+        return isset($this->_resourceGraph[$resource]);
     }
 
     /**

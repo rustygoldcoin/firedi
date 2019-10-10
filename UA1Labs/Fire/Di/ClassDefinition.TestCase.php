@@ -16,6 +16,7 @@ namespace Test\UA1Labs\Fire\Di;
 
 use Fire\Test\TestCase;
 use UA1Labs\Fire\Di\ClassDefinition;
+use ReflectionClass;
 
 class ClassDefinitionTestCase extends TestCase
 {
@@ -28,7 +29,7 @@ class ClassDefinitionTestCase extends TestCase
 
     public function beforeEach()
     {
-        $this->_classDefinition = new ClassDefinition('stdClass');
+        $this->_classDefinition = new ClassDefinition('Test\UA1Labs\Fire\Di\MyTestClass');
     }
 
     public function afterEach()
@@ -40,6 +41,30 @@ class ClassDefinitionTestCase extends TestCase
     {
         $this->should('Not throw an exception when the class is constructed');
         $this->assert(true);
+
+        $this->should('Have set a serviceId of "Test\UA1Labs\Fire\Di\MyTestClass".');
+        $this->assert($this->_classDefinition->serviceId === 'Test\UA1Labs\Fire\Di\MyTestClass');
+
+        $this->should('Have set a classDef as a ReflectionClass object.');
+        $this->assert($this->_classDefinition->classDef instanceof ReflectionClass);
+
+        $this->should('Have set a dependency of "Test\UA1Labs\Fire\Di\MyDependentClass"');
+        $this->assert(
+            isset($this->_classDefinition->dependencies[0])
+            && $this->_classDefinition->dependencies[0] === 'Test\UA1Labs\Fire\Di\MyDependentClass'
+        );
     }
 
 }
+
+/**
+ * Test classes need for tests.
+ */
+class MyTestClass
+{
+    public function __construct(MyDependentClass $stdClass)
+    {}
+}
+
+class MyDependentClass
+{}

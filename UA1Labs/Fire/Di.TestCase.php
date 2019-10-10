@@ -163,38 +163,41 @@ class DiTestCase extends TestCase
  */
 class TestClassA
 {
-    public function __construct(TestClassB $B) {}
+    public function __construct(TestClassB $B)
+    {}
 }
 
 class TestClassB
 {
     public $C;
 
-    public function __construct(TestClassC $C) {
+    public function __construct(TestClassC $C)
+    {
         $this->C = $C;
     }
 }
 
 class TestClassC
-{
-
-}
+{}
 
 class TestClassD
 {
     public $A;
     public $B;
 
-    public function __construct(TestClassA $A, TestClassB $B) {
+    public function __construct(TestClassA $A, TestClassB $B)
+    {
         $this->A = $A;
         $this->B = $B;
     }
 }
 
 class TestClassAA {
-    public function __construct(TestClassBB $BB) {}
+    public function __construct(TestClassBB $BB)
+    {}
 }
 
 class TestClassBB {
-    public function __construct(TestClassAA $AA) {}
+    public function __construct(TestClassAA $AA)
+    {}
 }

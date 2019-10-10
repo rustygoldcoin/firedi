@@ -51,13 +51,13 @@ class ClassDefinition
      * determines that the service should be relocated into the ulfberht
      * runtime environment.
      *
-     * @param string $className The class you would like to wrap in an ulfberhtservice.
+     * @param string $classname The class you would like to wrap in an ulfberhtservice.
      * @return void
      */
-    public function __construct($className)
+    public function __construct($classname)
     {
-        $this->serviceId = $className;
-        $this->classDef = new ReflectionClass($className);
+        $this->serviceId = $classname;
+        $this->classDef = new ReflectionClass($classname);
         $this->dependencies = [];
 
         //use reflection to get dependencies then store them
