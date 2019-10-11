@@ -1,6 +1,6 @@
 {
     "name": "ua1-labs/firedi",
-    "description": "FireDI is a powerful and light weight service based PHP Dependency Injection management tool.",
+    "description": "FireDI is a powerful and light weight PHP dependency injection library.",
     "license": "MIT",
     "authors": [
         {
