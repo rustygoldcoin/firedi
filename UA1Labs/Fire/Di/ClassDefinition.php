@@ -1,48 +1,48 @@
 <?php
+
 /**
- * @package ulfberht
- * @author Joshua L. Johnson <josh@ua1.us>
- * @link http://ua1.us
- * @copyright Copyright 2016, Joshua L. Johnson
- * @license MIT
+ *    __  _____   ___   __          __
+ *   / / / /   | <  /  / /   ____ _/ /_  _____
+ *  / / / / /| | / /  / /   / __ `/ __ `/ ___/
+ * / /_/ / ___ |/ /  / /___/ /_/ / /_/ (__  )
+ * `____/_/  |_/_/  /_____/`__,_/_.___/____/
+ *
+ * @package FireDI
+ * @author UA1 Labs Developers https://ua1.us
+ * @copyright Copyright (c) UA1 Labs
  */
 
-namespace ulfberht\core;
+namespace UA1Labs\Fire\Di;
 
 use ReflectionClass;
-use ulfberht\core\ulfberhtException;
+use UA1Labs\Fire\DiException;
 
 /**
- * This class defines a service to register to ulfberht.
+ * This class is meant to wrap a class being registered with FireDI.
  */
-class serviceWrapper {
-
-    const FACTORY_CONSTRUCTOR = 'factory';
-    const SINGLETON_CONSTRUCTOR = 'singleton';
+class ClassDefinition
+{
 
     /**
      * The ID of the service
+     *
+     * @var string
      */
     public $serviceId;
 
     /**
      * A reflection object that defines this particular service.
+     *
      * @var ReflectionClass
      */
     public $classDef;
 
     /**
-     * The build type of this particular service. Currently, you have two
-     * build types that is supported by ulfberht. A 'singleton' and a 'factory'
-     * @var string
-     */
-    public $constructorType;
-
-    /**
      * An array that stores the names of the variables defined in the $closure.
      * The names of the variables of the $closure defines what services this
      * service depends on.
-     * @var array
+     *
+     * @var array<string>
      */
     public $dependencies;
 
@@ -50,14 +50,14 @@ class serviceWrapper {
      * The constructor sets up the service object to be stored until zulfberht
      * determines that the service should be relocated into the ulfberht
      * runtime environment.
-     * @param string $className The class you would like to wrap in an ulfberhtservice.
-     * @param string $constructorType The type of constructor to use when you
-     * instaniate the service.
+     *
+     * @param string $classname The class you would like to wrap in an ulfberhtservice.
+     * @return void
      */
-    public function __construct($className, $constructorType) {
-        $this->serviceId = $className;
-        $this->constructorType = $constructorType;
-        $this->classDef = new ReflectionClass($className);
+    public function __construct($classname)
+    {
+        $this->serviceId = $classname;
+        $this->classDef = new ReflectionClass($classname);
         $this->dependencies = [];
 
         //use reflection to get dependencies then store them
