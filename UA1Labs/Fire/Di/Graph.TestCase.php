@@ -85,12 +85,39 @@ class GraphTestCase extends TestCase
 
     public function testRunDependencyCheck()
     {
+        $this->should('Return an error code of "1" (Resourece Not Found).');
+        $this->_graph->addResource('Resource1');
+        $this->_graph->addDependency('Resource1', 'Resource2');
+        $check = $this->_graph->runDependencyCheck('Resource1');
+        $this->assert(isset($check->code) && $check->code === 1);
 
+        $this->should('Contain which resource was missing.');
+        $this->assert(isset($check->resourceId) && $check->resourceId === 'Resource2');
+
+        $this->_graph->resetDepenencyCheck();
+
+        $this->should('Return and error code "2" (Circular Dependnecy).');
+        $this->_graph->addResource('Resource2');
+        $this->_graph->addDependency('Resource2', 'Resource1');
+        $check = $this->_graph->runDependencyCheck('Resource1');
+        $this->assert(isset($check->code) && $check->code === 2);
+
+        $this->should('Contain the resource of which caused the circular dependency.');
+        $this->assert(isset($check->resourceId) && $check->resourceId === 'Resource2');
     }
 
     public function testGetDependencyResolveOrder()
     {
-
+        $this->should('Resolve dependencies in the order they need to be resolved.');
+        $this->_graph->addResource('Resource1');
+        $this->_graph->addResource('Resource2');
+        $this->_graph->addResource('Resource3');
+        $this->_graph->addDependencies('Resource1', ['Resource2', 'Resource3']);
+        $this->_graph->addDependency('Resource2', 'Resource3');
+        $this->_graph->runDependencyCheck('Resource1');
+        $resolveOrder = $this->_graph->getDependencyResolveOrder();
+        debugger($resolveOrder, true);
+        $this->assert($resolveOrder === ['Resource3', 'Resource2']);
     }
 
     public function testResetDependencyCheck()
