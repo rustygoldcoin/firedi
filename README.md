@@ -12,6 +12,10 @@ Features:
 * The Ability to define your own dependencies within the DI container. This works great for mocking dependencies within unit/integration tests.
 * Ability to define your own dependencies for the situation where you need to get a class with specific dependencies that are not defined with in the container.
 
+## Documentation
+
+https://ua1.us/projects/firedi/
+
 ## Install FireDI Using Composer
 
     composer require ua1-labs/firedi
@@ -38,7 +42,3 @@ __FireDI In Action__
 
     // obtain an object and have it's dependencies resolved for you
     $myClass1 = $firedi->get('MyClass1');
-
-## Documentation
-
-https://ua1.us/projects/firedi/
