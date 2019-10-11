@@ -91,7 +91,7 @@ class DiTestCase extends TestCase
         try {
             $this->_fireDi->get('UndefinedClass');
             $this->assert(false);
-        } catch (Throwable $e) {
+        } catch (DiException $e) {
             $this->assert(true);
         }
 
@@ -99,7 +99,7 @@ class DiTestCase extends TestCase
         try {
             $this->_fireDi->get('Test\UA1Labs\Fire\TestClassAA');
             $this->assert(false);
-        } catch (Throwable $e) {
+        } catch (DiException $e) {
             $this->assert(true);
         }
     }

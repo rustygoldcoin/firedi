@@ -289,7 +289,7 @@ class Di
             }
         }
 
-        $this->_classDependencyGraph->resetDepenencyCheck();
+        $this->_classDependencyGraph->resetDependencyCheck();
     }
 
     /**

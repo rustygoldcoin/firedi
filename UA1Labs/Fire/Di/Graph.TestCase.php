@@ -94,7 +94,7 @@ class GraphTestCase extends TestCase
         $this->should('Contain which resource was missing.');
         $this->assert(isset($check->resourceId) && $check->resourceId === 'Resource2');
 
-        $this->_graph->resetDepenencyCheck();
+        $this->_graph->resetDependencyCheck();
 
         $this->should('Return and error code "2" (Circular Dependnecy).');
         $this->_graph->addResource('Resource2');
@@ -116,13 +116,19 @@ class GraphTestCase extends TestCase
         $this->_graph->addDependency('Resource2', 'Resource3');
         $this->_graph->runDependencyCheck('Resource1');
         $resolveOrder = $this->_graph->getDependencyResolveOrder();
-        debugger($resolveOrder, true);
         $this->assert($resolveOrder === ['Resource3', 'Resource2']);
     }
 
     public function testResetDependencyCheck()
     {
-
+        $this->should('Reset a dependency check.');
+        $this->_graph->addResource('Resource1');
+        $this->_graph->addResource('Resource2');
+        $this->_graph->addDependency('Resouce1', 'Resource2');
+        $this->_graph->runDependencyCheck('Resouce1');
+        $this->_graph->resetDependencyCheck();
+        $resolveOrder = $this->_graph->getDependencyResolveOrder('Resource1');
+        $this->assert(empty($resolveOrder));
     }
 
 }

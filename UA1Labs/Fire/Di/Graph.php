@@ -171,7 +171,7 @@ class Graph
     {
         $dependencies = $this->_resolved;
         array_pop($dependencies);
-        return $dependencies;
+        return array_values($dependencies);
     }
 
     /**
@@ -180,7 +180,7 @@ class Graph
      *
      * @return void
      */
-    public function resetDepenencyCheck()
+    public function resetDependencyCheck()
     {
         $this->_resolved = [];
         $this->_unresolved = [];
@@ -223,7 +223,7 @@ class Graph
     {
         $error = $this->_errorCodes[$code];
         $error->resourceId = $resourceId;
-        $this->resetDepenencyCheck();
+        $this->resetDependencyCheck();
         return $error;
     }
 
