@@ -1,5 +1,6 @@
 {
     "name": "ua1-labs/firedi",
+    "version": "2.1.0",
     "description": "FireDI is a powerful and light weight PHP dependency injection library.",
     "license": "MIT",
     "authors": [
@@ -21,11 +22,11 @@
     ],
     "type": "library",
     "scripts": {
-        "test": "php vendor/ua1-labs/firetest/scripts/runner.php --dir=UA1Labs --ext=.TestCase.php"
+        "test": "php vendor/ua1-labs/firetest/scripts/runner.php --dir=/UA1Labs --ext=.TestCase.php"
     },
     "require": {
-        "ua1-labs/firetest": "^1.1",
-        "ua1-labs/firebug": "^1.8"
+        "ua1-labs/firetest": "2.*",
+        "ua1-labs/firebug": "1.*"
     },
     "autoload": {
         "psr-4": {

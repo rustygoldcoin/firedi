@@ -26,14 +26,9 @@ use UA1Labs\Fire\DiException;
 class Di
 {
 
-    const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot'
-        . ' be registered with FireDI.';
-    const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s",'
-        . ' FireDI found that there was a cirular dependency caused by the class'
-        . ' "%s".';
-    const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s",'
-        . ' FireDI found that the class dependency "%s"'
-        . ' could not be found.';
+    const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
+    const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
+    const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s", FireDI found that the class dependency "%s" could not be found.';
 
     /**
      * A map that stores all class definitions.
