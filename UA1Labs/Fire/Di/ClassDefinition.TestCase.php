@@ -14,7 +14,7 @@
 
 namespace Test\UA1Labs\Fire\Di;
 
-use Fire\Test\TestCase;
+use UA1Labs\Fire\Test\TestCase;
 use UA1Labs\Fire\Di\ClassDefinition;
 use ReflectionClass;
 

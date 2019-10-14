@@ -14,7 +14,7 @@
 
 namespace Test\UA1Labs\Fire\Di;
 
-use Fire\Test\TestCase;
+use UA1Labs\Fire\Test\TestCase;
 use UA1Labs\Fire\Di\Graph;
 use Throwable;
 
@@ -57,30 +57,14 @@ class GraphTestCase extends TestCase
         $this->_graph->addResource('MyResource');
         $this->_graph->addDependencies('MyResource', $dependencies);
         $this->assert($this->_graph->getDependencies('MyResource') === $dependencies);
-
-        $this->should('Throw an exception if a resource does not exist to add dependencies to.');
-        try {
-            $this->_graph->addResouce('UnknownResource', ['DependentResource']);
-            $this->assert(false);
-        } catch (Throwable $e) {
-            $this->assert(true);
-        }
     }
 
     public function testAddDependency()
     {
         $this->should('Add a dependency to a resource.');
-        $this->_graph->addResource('MyResouce');
+        $this->_graph->addResource('MyResource');
         $this->_graph->addDependency('MyResource', 'Dependency1');
         $this->assert($this->_graph->getDependencies('MyResource') === ['Dependency1']);
-
-        $this->should('Throw an exception if a resource does not exist to add dependencies to.');
-        try {
-            $this->_graph->addResouce('UnknownResource', 'DependentResource');
-            $this->assert(false);
-        } catch (Throwable $e) {
-            $this->assert(true);
-        }
     }
 
     public function testRunDependencyCheck()

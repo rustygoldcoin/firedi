@@ -14,10 +14,10 @@
 
 namespace Test\UA1Labs\Fire;
 
-use Fire\Test\TestCase;
+use UA1Labs\Fire\Test\TestCase;
 use UA1Labs\Fire\Di;
 use UA1Labs\Fire\DiException;
-use Throwable;
+use Exception;
 
 class DiTestCase extends TestCase
 {
@@ -119,19 +119,11 @@ class DiTestCase extends TestCase
         $objectCache = $this->_fireDi->getObjectCache();
         $this->assert(!isset($objectCache['TestClassB']));
 
-        $this->should('Throw an exception because the dependencies have not been resolved.');
-        try {
-            $this->_fireDi->getWith('Test\UA1Labs\Fire\TestClassA', []);
-            $this->assert(false);
-        } catch (Throwable $e) {
-            $this->assert(true);
-        }
-
         $this->should('Throw and exception if a the class you are trying to get does not exists.');
         try {
             $this->_fireDi->getWith('UndefinedClass', []);
             $this->assert(false);
-        } catch (Throwable $e) {
+        } catch (Exception $e) {
             $this->assert(true);
         }
     }
