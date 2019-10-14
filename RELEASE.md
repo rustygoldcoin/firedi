@@ -1,6 +1,6 @@
 # Release Changes
 
-* 2.1.0
+* 2.0.1
     * Fixes for broken FireTests with the integration of FIreTest 2.0
     * Adding RELEASE.md for tracking changes
     * Add current release version to composer.json
