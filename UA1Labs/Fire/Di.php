@@ -176,6 +176,7 @@ class Di
      * Registers a class definition with FireDI.
      *
      * @param string $classname The class you would like to register
+     * @throws DiException if the class does not exist
      * @return void
      */
     private function _registerClassDefinition($classname)
@@ -270,6 +271,7 @@ class Di
      * are any circular dependencies.
      *
      * @param string $classname The class you are checking dependencies for
+     * @throws DiException
      * @return array<string> The order we need to resolve dependencies
      */
     private function _circularDependencyErrorCheck($classname)
