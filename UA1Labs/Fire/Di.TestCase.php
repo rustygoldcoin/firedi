@@ -17,6 +17,7 @@ namespace Test\UA1Labs\Fire;
 use \UA1Labs\Fire\Test\TestCase;
 use \UA1Labs\Fire\Di;
 use \UA1Labs\Fire\DiException;
+use \UA1Labs\Fire\Di\NotFoundException;
 use \Exception;
 
 class DiTestCase extends TestCase
@@ -48,11 +49,34 @@ class DiTestCase extends TestCase
     {
         $this->should('Put an object in the cache without an exception.');
         try {
-            $this->fireDi->put('TestObject', new TestClassC());
+            $this->fireDi->set('TestObject', new TestClassC());
             $this->assert(true);
         } catch (DiException $e) {
             $this->assert(false);
         }
+    }
+
+    public function testHasObject()
+    {
+        $this->should('Return true when a class can be resolved.');
+        $result = $this->fireDi->has('\Test\UA1Labs\Fire\TestClassC');
+        $this->assert($result === true);
+        $this->fireDi->clearObjectCache();
+
+        $this->should('Return false when a class has a dependency that cannot be resolved.');
+        $result = $this->fireDi->has('\Test\UA1Labs\Fire\TestClassCC');
+        $this->assert($result === false);
+        $this->fireDi->clearObjectCache();
+
+        $this->should('Return false when a class has a circular dependency issue.');
+        $result = $this->fireDi->has('\Test\UA1Labs\Fire\TestClassAA');
+        $this->assert($result === false);
+        $this->fireDi->clearObjectCache();
+
+        $this->should('Return false when a class does not exist.');
+        $result = $this->fireDi->has('Undefined');
+        $this->assert($result === false);
+        $this->fireDi->clearObjectCache();
     }
 
     public function testGetObject()
@@ -87,19 +111,19 @@ class DiTestCase extends TestCase
         $this->should('Have set ::C as TestClassC on TestClassB.');
         $this->assert(isset($testClassD->B->C) && $testClassD->B->C instanceof TestClassC);
 
-        $this->should('Throw an exception if a the class you are trying to get does not exists.');
+        $this->should('Throw a NotFoundException if a the class you are trying to get does not exists.');
         try {
             $this->fireDi->get('UndefinedClass');
             $this->assert(false);
-        } catch (DiException $e) {
+        } catch (NotFoundException $e) {
             $this->assert(true);
         }
 
-        $this->should('Throw an exception if a circular dependency is detected.');
+        $this->should('Throw a NotFoundException if a circular dependency is detected.');
         try {
             $this->fireDi->get('Test\UA1Labs\Fire\TestClassAA');
             $this->assert(false);
-        } catch (DiException $e) {
+        } catch (NotFoundException $e) {
             $this->assert(true);
         }
     }
@@ -123,14 +147,14 @@ class DiTestCase extends TestCase
         try {
             $this->fireDi->getWith('UndefinedClass', []);
             $this->assert(false);
-        } catch (Exception $e) {
+        } catch (DiException $e) {
             $this->assert(true);
         }
     }
 
     public function testGetObjectCache()
     {
-        $this->fireDi->put('TestObject', new TestClassC());
+        $this->fireDi->set('TestObject', new TestClassC());
         $objectCache = $this->fireDi->getObjectCache();
 
         $this->should('Return an object cache array with a key "TestObject".');
@@ -143,7 +167,7 @@ class DiTestCase extends TestCase
     public function testClearObjectCache()
     {
         $this->should('Remove all objects from the object cache');
-        $this->fireDi->put('TestObject', new TestClassC());
+        $this->fireDi->set('TestObject', new TestClassC());
         $this->fireDi->clearObjectCache();
         $objectCache = $this->fireDi->getObjectCache();
         $this->assert(empty($objectCache));
@@ -184,12 +208,19 @@ class TestClassD
     }
 }
 
-class TestClassAA {
+class TestClassAA
+{
     public function __construct(TestClassBB $BB)
     {}
 }
 
-class TestClassBB {
+class TestClassBB
+{
     public function __construct(TestClassAA $AA)
+    {}
+}
+
+class TestClassCC {
+    public function __construct(TestClassDD $DD)
     {}
 }

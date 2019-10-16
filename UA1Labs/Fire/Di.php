@@ -17,18 +17,18 @@ namespace UA1Labs\Fire;
 use \ReflectionClass;
 use \UA1Labs\Fire\Di\Graph;
 use \UA1Labs\Fire\Di\ClassDefinition;
+use \UA1Labs\Fire\Di\NotFoundException;
 use \UA1Labs\Fire\DiException;
+use \Psr\Container\ContainerInterface;
 
 /**
  * The Di class is what makes dependency injection possible. This class handles the
  * entire dependency injection environment.
  */
-class Di
+class Di implements ContainerInterface
 {
 
-    const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
-    const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
-    const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s", FireDI found that the class dependency "%s" could not be found.';
+    const ERROR_NOT_FOUND_IN_CONTAINER = '"%s" could not be resolved by FireDI.';
 
     /**
      * A map that stores all class definitions.
@@ -63,14 +63,30 @@ class Di
     }
 
     /**
-     * Puts an object into the object cache that is used to resolve dependencies.
+     * Sets an object into the object cache that is used to resolve dependencies.
      *
      * @param string $classname The classname the instance object should resolve for
-     * @param object $instanceObject The instance object you want to return for the classname
+     * @param object|callable $instanceObject The instance object you want to return for the classname
      */
-    public function put($classname, $instanceObject)
+    public function set($classname, $instanceObject)
     {
         $this->setCachedObject($classname, $instanceObject);
+    }
+
+    /**
+     * Determines if the class can be resolved.
+     *
+     * @param string $classname The classname of the instance you would like to resolve
+     * @return boolean
+     */
+    public function has($classname)
+    {
+        try {
+            $resolved = $this->resolveInstanceObject($classname);
+            return true;
+        } catch (DiException $e) {
+            return false;
+        }
     }
 
     /**
@@ -78,11 +94,16 @@ class Di
      * dependencies and creating an instance of the object.
      *
      * @param $classname string The class you would like to instanciate
+     * @throws \UA1Labs\Fire\Di\NotFoundException If the class connot be resolved
      * @return object The instanciated object based on the $classname
      */
     public function get($classname)
     {
-        return $this->resolveInstanceObject($classname);
+        if (!$this->has($classname)) {
+            $errorMessage = sprintf(self::ERROR_NOT_FOUND_IN_CONTAINER, $classname);
+            throw new NotFoundException($errorMessage);
+        }
+        return $this->getCachedObject($classname);
     }
 
     /**
@@ -178,7 +199,7 @@ class Di
     private function registerClassDefinition($classname)
     {
         if (!class_exists($classname)) {
-            $errorMessage = sprintf(self::ERROR_CLASS_NOT_FOUND, $classname);
+            $errorMessage = sprintf(DiException::ERROR_CLASS_NOT_FOUND, $classname);
             throw new DiException($errorMessage);
         }
 
@@ -275,7 +296,7 @@ class Di
         if ($error) {
             switch ($error->code) {
                 case 2:
-                    $errorMessage = sprintf(self::ERROR_CIRCULAR_DEPENDENCY, $classname, $error->resourceId);
+                    $errorMessage = sprintf(DiException::ERROR_CIRCULAR_DEPENDENCY, $classname, $error->resourceId);
                     throw new DiException($errorMessage);
                     break;
             }
@@ -294,14 +315,11 @@ class Di
     {
         $classDefinition = $this->getClassDefinition($classname);
         $classDef = $classDefinition->classDef;
-        if ($cache) {
-            if (!$this->isObjectCached($classname)) {
-                $this->setCachedObject($classname, $classDef->newInstanceArgs($resolvedDependencies));
-            }
-            return $this->getCachedObject($classname);
-        } else {
-            $classDef = $classDefinition->classDef;
-            return $classDef->newInstanceArgs($resolvedDependencies);
+        $resolvedObj = $classDef->newInstanceArgs($resolvedDependencies);
+        if ($cache && !$this->isObjectCached($classname)) {
+            $this->setCachedObject($classname, $resolvedObj);
         }
+
+        return $resolvedObj;
     }
 }

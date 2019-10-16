@@ -16,6 +16,7 @@ namespace UA1Labs\Fire\Di;
 
 use \ReflectionClass;
 use \UA1Labs\Fire\DiException;
+use \ReflectionException;
 
 /**
  * This class is meant to wrap a class being registered with FireDI.
@@ -65,11 +66,15 @@ class ClassDefinition
             $parameters = $constructor->getParameters();
             if (!empty($parameters)) {
                 foreach ($parameters as $parameter) {
-                    $dependency = $parameter->getClass();
-                    if ($dependency) {
-                        $this->dependencies[] = $dependency->getName();
-                    } else {
-                        $this->dependencies[] = '';
+                    try {
+                        $dependency = $parameter->getClass();
+                        if ($dependency) {
+                            $this->dependencies[] = $dependency->getName();
+                        } else {
+                            $this->dependencies[] = '';
+                        }
+                    } catch (ReflectionException $e) {
+                        throw new DiException($e->getMessage());
                     }
                 }
             }
