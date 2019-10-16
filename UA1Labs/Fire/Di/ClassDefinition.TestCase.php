@@ -14,16 +14,16 @@
 
 namespace Test\UA1Labs\Fire\Di;
 
-use UA1Labs\Fire\Test\TestCase;
-use UA1Labs\Fire\Di\ClassDefinition;
-use ReflectionClass;
+use \UA1Labs\Fire\Test\TestCase;
+use \UA1Labs\Fire\Di\ClassDefinition;
+use \ReflectionClass;
 
 class ClassDefinitionTestCase extends TestCase
 {
     /**
      * The FireDi ClassDefinition Class
      *
-     * @var ClassDefinition
+     * @var \UA1Lab\Fire\Di\ClassDefinition
      */
     private $classDefinition;
 

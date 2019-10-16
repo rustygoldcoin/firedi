@@ -14,7 +14,7 @@
 
 namespace UA1Labs\Fire\Di;
 
-use stdClass;
+use \stdClass;
 
 /**
  * This class makes it to easy to manage a dependency network
@@ -64,14 +64,14 @@ class Graph
         $this->resolved = [];
         $this->unresolved = [];
         $this->resourceGraph = [];
-        $this->errorConfig();
+        $this->initErrorConfig();
     }
 
     /**
      * This method is used to add a resource to the dependecy graph.
      *
      * @param string $resourseId A unique ID that identifies a resource
-     * @return UA1Labs\Fire\Di\Graph
+     * @return \UA1Labs\Fire\Di\Graph
      */
     public function addResource($resourseId)
     {
@@ -99,7 +99,7 @@ class Graph
      *     want to add dependencies to.
      * @param array $dependencies An array that contains the dependencies you want
      *     to apply to the resource.
-     * @return UA1Labs\Fire\Di\Graph
+     * @return \UA1Labs\Fire\Di\Graph
      */
     public function addDependencies($resourceId, array $dependencies)
     {
@@ -114,7 +114,7 @@ class Graph
      *    want to add dependency to.
      * @param string $dependency A var that contains the dependency you want
      *    to apply to the resource.
-     * @return UA1Labs\Fire\Di\Graph
+     * @return \UA1Labs\Fire\Di\Graph
      */
     public function addDependency($resourceId, $dependency)
     {
@@ -176,8 +176,6 @@ class Graph
     /**
      * This method resets the status of all properies required to run another
      * dependency check.
-     *
-     * @return void
      */
     public function resetDependencyCheck()
     {
@@ -187,10 +185,8 @@ class Graph
 
     /**
      * This method is a helper method to set the default error config values.
-     *
-     * @return void
      */
-    private function errorConfig()
+    private function initErrorConfig()
     {
         //error code config
         $error1 = (object) [

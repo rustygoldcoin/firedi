@@ -14,17 +14,17 @@
 
 namespace Test\UA1Labs\Fire;
 
-use UA1Labs\Fire\Test\TestCase;
-use UA1Labs\Fire\Di;
-use UA1Labs\Fire\DiException;
-use Exception;
+use \UA1Labs\Fire\Test\TestCase;
+use \UA1Labs\Fire\Di;
+use \UA1Labs\Fire\DiException;
+use \Exception;
 
 class DiTestCase extends TestCase
 {
     /**
      * The FireDi
      *
-     * @var Di
+     * @var \UA1Labs\Fire\Di
      */
     private $fireDi;
 

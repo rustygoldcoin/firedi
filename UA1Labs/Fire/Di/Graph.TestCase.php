@@ -23,7 +23,7 @@ class GraphTestCase extends TestCase
     /**
      * The FireDi Graph Class
      *
-     * @var Graph
+     * @var \UA1Labs\Fire\Di\Graph
      */
     private $graph;
 

@@ -26,9 +26,9 @@ use \UA1Labs\Fire\DiException;
 class Di
 {
 
-    public const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
-    public const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
-    public const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s", FireDI found that the class dependency "%s" could not be found.';
+    const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
+    const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
+    const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s", FireDI found that the class dependency "%s" could not be found.';
 
     /**
      * A map that stores all class definitions.
@@ -67,7 +67,6 @@ class Di
      *
      * @param string $classname The classname the instance object should resolve for
      * @param object $instanceObject The instance object you want to return for the classname
-     * @return void
      */
     public function put($classname, $instanceObject)
     {
@@ -116,8 +115,6 @@ class Di
 
     /**
      * Clears the object cache.
-     *
-     * @return void
      */
     public function clearObjectCache()
     {
@@ -154,7 +151,6 @@ class Di
      *
      * @param string $classname The class you want to set the object cache for
      * @param object $object The object you want to set the object cache for
-     * @return void
      */
     private function setCachedObject($classname, $object)
     {
@@ -252,7 +248,6 @@ class Di
      * current class's depenencies to ensure we don't end up in an infinite loop.
      *
      * @param string $classname The class you would like to register the dependencies for.
-     * @return void
      */
     private function registerDependentClassDefinitions($classname)
     {
@@ -294,7 +289,6 @@ class Di
      *
      * @param string $classname The class you want to instanciate
      * @param array<mixed> $resolvedDependencies The class dependencies
-     * @return void
      */
     private function instanciateClass($classname, $resolvedDependencies, $cache = false)
     {
