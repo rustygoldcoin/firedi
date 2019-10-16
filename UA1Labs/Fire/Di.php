@@ -156,12 +156,18 @@ class Di implements ContainerInterface
      * Returns the cached object if it exists. Otherwise it returns null.
      *
      * @param string $classname The classname you want to obtain the object for.
-     * @return object|null
+     * @return mixed|null
      */
     private function getCachedObject($classname)
     {
         if ($this->isObjectCached($classname)) {
-            return $this->objectCache[$classname];
+            $cachedObject = $this->objectCache[$classname];
+
+            if (is_callable($cachedObject)) {
+                return $cachedObject();
+            }
+
+            return $cachedObject;
         }
 
         return null;
@@ -171,7 +177,7 @@ class Di implements ContainerInterface
      * Sets the object in object cache.
      *
      * @param string $classname The class you want to set the object cache for
-     * @param object $object The object you want to set the object cache for
+     * @param mixed $object The object you want to set the object cache for
      */
     private function setCachedObject($classname, $object)
     {

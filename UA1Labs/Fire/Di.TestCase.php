@@ -45,7 +45,7 @@ class DiTestCase extends TestCase
         $this->assert($this->fireDi instanceof Di);
     }
 
-    public function testPutObject()
+    public function testSetObject()
     {
         $this->should('Put an object in the cache without an exception.');
         try {
@@ -54,6 +54,48 @@ class DiTestCase extends TestCase
         } catch (DiException $e) {
             $this->assert(false);
         }
+
+        $this->should('Put an array in the cache.');
+        $this->fireDi->clearObjectCache();
+        $this->fireDi->set('TestObject', []);
+        $this->assert($this->fireDi->get('TestObject') === []);
+
+        $this->should('Put a string in the cache.');
+        $this->fireDi->clearObjectCache();
+        $this->fireDi->set('TestObject', 'Test');
+        $this->assert($this->fireDi->get('TestObject') === 'Test');
+    }
+
+    public function testSetCallable()
+    {
+        $callable = function() {
+            return new TestClassC;
+        };
+
+        $this->should('Allow me to set a callable object in the object cache.');
+        $this->fireDi->set('Test\Callable\Function', $callable);
+        $objectCache = $this->fireDi->getObjectCache();
+        $this->assert(
+            isset($objectCache['Test\Callable\Function'])
+            && $objectCache['Test\Callable\Function'] === $callable
+        );
+
+        $this->should('Allow me to call the object from cache and the callable function should be executed.');
+        $this->assert($this->fireDi->get('Test\Callable\Function') instanceof TestClassC);
+        $this->fireDi->clearObjectCache();
+
+        $this->should('Allow me to override a class definition with a callable.');
+        $testClassC = $this->fireDi->get('Test\UA1Labs\Fire\TestClassC');
+        $this->fireDi->set('Test\UA1Labs\Fire\TestClassC', $callable);
+        $objectCache = $this->fireDi->getObjectCache();
+        $this->assert(
+            isset($objectCache['Test\UA1Labs\Fire\TestClassC'])
+            && $objectCache['Test\UA1Labs\Fire\TestClassC'] === $callable
+        );
+
+        $this->should('Resolve "TestClassD" properly with the callable overridden.');
+        $testClassD = $this->fireDi->get('Test\UA1Labs\Fire\TestClassD');
+        $this->assert($testClassD instanceof TestClassD);
     }
 
     public function testHasObject()
