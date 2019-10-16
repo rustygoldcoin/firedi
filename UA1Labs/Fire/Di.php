@@ -14,10 +14,10 @@
 
 namespace UA1Labs\Fire;
 
-use ReflectionClass;
-use UA1Labs\Fire\Di\Graph;
-use UA1Labs\Fire\Di\ClassDefinition;
-use UA1Labs\Fire\DiException;
+use \ReflectionClass;
+use \UA1Labs\Fire\Di\Graph;
+use \UA1Labs\Fire\Di\ClassDefinition;
+use \UA1Labs\Fire\DiException;
 
 /**
  * The Di class is what makes dependency injection possible. This class handles the
@@ -26,40 +26,40 @@ use UA1Labs\Fire\DiException;
 class Di
 {
 
-    const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
-    const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
-    const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s", FireDI found that the class dependency "%s" could not be found.';
+    public const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
+    public const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
+    public const ERROR_DEPENDENCY_NOT_FOUND = 'While trying to resolve class "%s", FireDI found that the class dependency "%s" could not be found.';
 
     /**
      * A map that stores all class definitions.
      *
-     * @var array<UA1Labs\Fire\Di\ClassDefinition>
+     * @var array<\UA1Labs\Fire\Di\ClassDefinition>
      */
-    private $_classDefinitions;
+    private $classDefinitions;
 
     /**
-     * Stores singleton object that have been registered as singleton type class.
+     * Stores objects and callables for resolving depedencies.
      *
-     * @var array
+     * @var array<mixed>
      */
-    private $_objectCache;
+    private $objectCache;
 
     /**
      * A dependency graph containing information about classes
      * and their dependencies.
      *
-     * @var UA1Labs\Fire\Di\Graph
+     * @var \UA1Labs\Fire\Di\Graph
      */
-    private $_classDependencyGraph;
+    private $classDependencyGraph;
 
     /**
      * The class constructor.
      */
     public function __construct()
     {
-        $this->_classDefinitions = [];
-        $this->_objectCache = [];
-        $this->_classDependencyGraph = new Graph();
+        $this->classDefinitions = [];
+        $this->objectCache = [];
+        $this->classDependencyGraph = new Graph();
     }
 
     /**
@@ -71,7 +71,7 @@ class Di
      */
     public function put($classname, $instanceObject)
     {
-        $this->_setCachedObject($classname, $instanceObject);
+        $this->setCachedObject($classname, $instanceObject);
     }
 
     /**
@@ -83,7 +83,7 @@ class Di
      */
     public function get($classname)
     {
-        return $this->_resolveInstanceObject($classname);
+        return $this->resolveInstanceObject($classname);
     }
 
     /**
@@ -97,11 +97,11 @@ class Di
     {
         // if the class doesn't have a class definition we should attempt
         // to register the class definition
-        if (!$this->_isClassDefinitionRegistered($classname)) {
-            $this->_registerClassDefinition($classname);
+        if (!$this->isClassDefinitionRegistered($classname)) {
+            $this->registerClassDefinition($classname);
         }
 
-        return $this->_instanciateClass($classname, $dependencies);
+        return $this->instanciateClass($classname, $dependencies);
     }
 
     /**
@@ -111,7 +111,7 @@ class Di
      */
     public function getObjectCache()
     {
-        return $this->_objectCache;
+        return $this->objectCache;
     }
 
     /**
@@ -121,7 +121,7 @@ class Di
      */
     public function clearObjectCache()
     {
-        $this->_objectCache = [];
+        $this->objectCache = [];
     }
 
     /**
@@ -129,9 +129,9 @@ class Di
      *
      * @return boolean
      */
-    private function _isObjectCached($classname)
+    private function isObjectCached($classname)
     {
-        return isset($this->_objectCache[$classname]);
+        return isset($this->objectCache[$classname]);
     }
 
     /**
@@ -140,10 +140,10 @@ class Di
      * @param string $classname The classname you want to obtain the object for.
      * @return object|null
      */
-    private function _getCachedObject($classname)
+    private function getCachedObject($classname)
     {
-        if ($this->_isObjectCached($classname)) {
-            return $this->_objectCache[$classname];
+        if ($this->isObjectCached($classname)) {
+            return $this->objectCache[$classname];
         }
 
         return null;
@@ -156,9 +156,9 @@ class Di
      * @param object $object The object you want to set the object cache for
      * @return void
      */
-    private function _setCachedObject($classname, $object)
+    private function setCachedObject($classname, $object)
     {
-        $this->_objectCache[$classname] = $object;
+        $this->objectCache[$classname] = $object;
     }
 
     /**
@@ -167,9 +167,9 @@ class Di
      * @param string $classname
      * @return boolean
      */
-    private function _isClassDefinitionRegistered($classname)
+    private function isClassDefinitionRegistered($classname)
     {
-        return isset($this->_classDefinitions[$classname]);
+        return isset($this->classDefinitions[$classname]);
     }
 
     /**
@@ -179,18 +179,18 @@ class Di
      * @throws DiException if the class does not exist
      * @return void
      */
-    private function _registerClassDefinition($classname)
+    private function registerClassDefinition($classname)
     {
         if (!class_exists($classname)) {
             $errorMessage = sprintf(self::ERROR_CLASS_NOT_FOUND, $classname);
             throw new DiException($errorMessage);
         }
 
-        $this->_classDefinitions[$classname] = new ClassDefinition($classname);
-        $this->_classDependencyGraph->addResource($classname);
-        $this->_classDependencyGraph->addDependencies(
+        $this->classDefinitions[$classname] = new ClassDefinition($classname);
+        $this->classDependencyGraph->addResource($classname);
+        $this->classDependencyGraph->addDependencies(
             $classname,
-            $this->_classDefinitions[$classname]->dependencies
+            $this->classDefinitions[$classname]->dependencies
         );
     }
 
@@ -200,10 +200,10 @@ class Di
      * @param string $classname
      * @return object|void
      */
-    private function _getClassDefinition($classname)
+    private function getClassDefinition($classname)
     {
-        if ($this->_isClassDefinitionRegistered($classname)) {
-            return $this->_classDefinitions[$classname];
+        if ($this->isClassDefinitionRegistered($classname)) {
+            return $this->classDefinitions[$classname];
         }
 
         return null;
@@ -217,31 +217,31 @@ class Di
      * @param $classname The classname of the instance object you would like to resolve
      * @return mixed The resolved instance object
      */
-    private function _resolveInstanceObject($classname)
+    private function resolveInstanceObject($classname)
     {
         // return object from the object cache if it is there
-        if ($this->_isObjectCached($classname)) {
-            return $this->_getCachedObject($classname);
+        if ($this->isObjectCached($classname)) {
+            return $this->getCachedObject($classname);
         }
 
         // if the class doesn't have a class definition we should attempt
         // to register the class definition
-        if (!$this->_isClassDefinitionRegistered($classname)) {
-            $this->_registerClassDefinition($classname);
+        if (!$this->isClassDefinitionRegistered($classname)) {
+            $this->registerClassDefinition($classname);
         }
 
         // recursively register dependency class definitions
-        $this->_registerDependentClassDefinitions($classname);
+        $this->registerDependentClassDefinitions($classname);
 
-        $classDefinition = $this->_getClassDefinition($classname);
+        $classDefinition = $this->getClassDefinition($classname);
         $dependencies = $classDefinition->dependencies;
 
         $di = [];
         foreach ($dependencies as $dependency) {
             //set $di[] with all dependencies and invoke
-            $di[] = $this->_resolveInstanceObject($dependency);
+            $di[] = $this->resolveInstanceObject($dependency);
         }
-        return $this->_instanciateClass($classname, $di, true);
+        return $this->instanciateClass($classname, $di, true);
     }
 
     /**
@@ -254,15 +254,15 @@ class Di
      * @param string $classname The class you would like to register the dependencies for.
      * @return void
      */
-    private function _registerDependentClassDefinitions($classname)
+    private function registerDependentClassDefinitions($classname)
     {
-        $classDefinition = $this->_getClassDefinition($classname);
+        $classDefinition = $this->getClassDefinition($classname);
         foreach ($classDefinition->dependencies as $dependency) {
-            if (!$this->_isClassDefinitionRegistered($dependency)) {
-                $this->_registerClassDefinition($dependency);
+            if (!$this->isClassDefinitionRegistered($dependency)) {
+                $this->registerClassDefinition($dependency);
             }
-            $this->_circularDependencyErrorCheck($classname);
-            $this->_registerDependentClassDefinitions($dependency);
+            $this->circularDependencyErrorCheck($classname);
+            $this->registerDependentClassDefinitions($dependency);
         }
     }
 
@@ -274,9 +274,9 @@ class Di
      * @throws DiException
      * @return array<string> The order we need to resolve dependencies
      */
-    private function _circularDependencyErrorCheck($classname)
+    private function circularDependencyErrorCheck($classname)
     {
-        $error = $this->_classDependencyGraph->runDependencyCheck($classname);
+        $error = $this->classDependencyGraph->runDependencyCheck($classname);
         if ($error) {
             switch ($error->code) {
                 case 2:
@@ -286,7 +286,7 @@ class Di
             }
         }
 
-        $this->_classDependencyGraph->resetDependencyCheck();
+        $this->classDependencyGraph->resetDependencyCheck();
     }
 
     /**
@@ -296,15 +296,15 @@ class Di
      * @param array<mixed> $resolvedDependencies The class dependencies
      * @return void
      */
-    private function _instanciateClass($classname, $resolvedDependencies, $cache = false)
+    private function instanciateClass($classname, $resolvedDependencies, $cache = false)
     {
-        $classDefinition = $this->_getClassDefinition($classname);
+        $classDefinition = $this->getClassDefinition($classname);
         $classDef = $classDefinition->classDef;
         if ($cache) {
-            if (!$this->_isObjectCached($classname)) {
-                $this->_setCachedObject($classname, $classDef->newInstanceArgs($resolvedDependencies));
+            if (!$this->isObjectCached($classname)) {
+                $this->setCachedObject($classname, $classDef->newInstanceArgs($resolvedDependencies));
             }
-            return $this->_getCachedObject($classname);
+            return $this->getCachedObject($classname);
         } else {
             $classDef = $classDefinition->classDef;
             return $classDef->newInstanceArgs($resolvedDependencies);
