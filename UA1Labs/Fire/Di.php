@@ -61,14 +61,14 @@ class Di implements ContainerInterface
     }
 
     /**
-     * Sets an object into the object cache that is used to resolve dependencies.
+     * Puts an object into the object cache that is used to resolve dependencies.
      *
      * @param string $classname The classname the instance object should resolve for
-     * @param object|callable $instanceObject The instance object you want to return for the classname
+     * @param object|callable $entry The object or callable you'd like to place in the object cache
      */
-    public function set($classname, $instanceObject)
+    public function set($classname, $entry)
     {
-        $this->setCachedObject($classname, $instanceObject);
+        $this->setCachedObject($classname, $entry);
     }
 
     /**
@@ -91,9 +91,9 @@ class Di implements ContainerInterface
      * Attempts to retrieve an instance object of the given classname by resolving its
      * dependencies and creating an instance of the object.
      *
-     * @param $classname string The class you would like to instanciate
-     * @throws \UA1Labs\Fire\Di\NotFoundException If the class connot be resolved
-     * @return object The instanciated object based on the $classname
+     * @param $classname string The class you would like to instantiate
+     * @throws \UA1Labs\Fire\Di\NotFoundException If the class cannot be resolved
+     * @return object The instantiated object based on the $classname
      */
     public function get($classname)
     {
