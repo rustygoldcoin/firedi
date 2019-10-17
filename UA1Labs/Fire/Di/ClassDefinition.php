@@ -14,8 +14,9 @@
 
 namespace UA1Labs\Fire\Di;
 
-use ReflectionClass;
-use UA1Labs\Fire\DiException;
+use \ReflectionClass;
+use \UA1Labs\Fire\DiException;
+use \ReflectionException;
 
 /**
  * This class is meant to wrap a class being registered with FireDI.
@@ -33,7 +34,7 @@ class ClassDefinition
     /**
      * A reflection object that defines this particular service.
      *
-     * @var ReflectionClass
+     * @var \ReflectionClass
      */
     public $classDef;
 
@@ -52,7 +53,6 @@ class ClassDefinition
      * runtime environment.
      *
      * @param string $classname The class you would like to wrap in an ulfberhtservice.
-     * @return void
      */
     public function __construct($classname)
     {
@@ -66,11 +66,15 @@ class ClassDefinition
             $parameters = $constructor->getParameters();
             if (!empty($parameters)) {
                 foreach ($parameters as $parameter) {
-                    $dependency = $parameter->getClass();
-                    if ($dependency) {
-                        $this->dependencies[] = $dependency->getName();
-                    } else {
-                        $this->dependencies[] = '';
+                    try {
+                        $dependency = $parameter->getClass();
+                        if ($dependency) {
+                            $this->dependencies[] = $dependency->getName();
+                        } else {
+                            $this->dependencies[] = '';
+                        }
+                    } catch (ReflectionException $e) {
+                        throw new DiException($e->getMessage());
                     }
                 }
             }

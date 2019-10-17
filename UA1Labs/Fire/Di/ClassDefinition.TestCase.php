@@ -14,27 +14,27 @@
 
 namespace Test\UA1Labs\Fire\Di;
 
-use UA1Labs\Fire\Test\TestCase;
-use UA1Labs\Fire\Di\ClassDefinition;
-use ReflectionClass;
+use \UA1Labs\Fire\Test\TestCase;
+use \UA1Labs\Fire\Di\ClassDefinition;
+use \ReflectionClass;
 
 class ClassDefinitionTestCase extends TestCase
 {
     /**
      * The FireDi ClassDefinition Class
      *
-     * @var ClassDefinition
+     * @var \UA1Lab\Fire\Di\ClassDefinition
      */
-    private $_classDefinition;
+    private $classDefinition;
 
     public function beforeEach()
     {
-        $this->_classDefinition = new ClassDefinition('Test\UA1Labs\Fire\Di\MyTestClass');
+        $this->classDefinition = new ClassDefinition('Test\UA1Labs\Fire\Di\MyTestClass');
     }
 
     public function afterEach()
     {
-        unset($this->_classDefinition);
+        unset($this->classDefinition);
     }
 
     public function testConstructor()
@@ -43,15 +43,15 @@ class ClassDefinitionTestCase extends TestCase
         $this->assert(true);
 
         $this->should('Have set a serviceId of "Test\UA1Labs\Fire\Di\MyTestClass".');
-        $this->assert($this->_classDefinition->serviceId === 'Test\UA1Labs\Fire\Di\MyTestClass');
+        $this->assert($this->classDefinition->serviceId === 'Test\UA1Labs\Fire\Di\MyTestClass');
 
         $this->should('Have set a classDef as a ReflectionClass object.');
-        $this->assert($this->_classDefinition->classDef instanceof ReflectionClass);
+        $this->assert($this->classDefinition->classDef instanceof ReflectionClass);
 
         $this->should('Have set a dependency of "Test\UA1Labs\Fire\Di\MyDependentClass"');
         $this->assert(
-            isset($this->_classDefinition->dependencies[0])
-            && $this->_classDefinition->dependencies[0] === 'Test\UA1Labs\Fire\Di\MyDependentClass'
+            isset($this->classDefinition->dependencies[0])
+            && $this->classDefinition->dependencies[0] === 'Test\UA1Labs\Fire\Di\MyDependentClass'
         );
     }
 

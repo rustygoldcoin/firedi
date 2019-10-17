@@ -12,18 +12,17 @@
  * @copyright Copyright (c) UA1 Labs
  */
 
-namespace UA1Labs\Fire;
+namespace UA1Labs\Fire\Di;
 
 use \Exception;
-use \Psr\Container\ContainerExceptionInterface;
+use \Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Exception thrown from the FireDI library.
  */
-class DiException extends Exception implements ContainerExceptionInterface
+class NotFoundException extends Exception implements NotFoundExceptionInterface
 {
 
-    const ERROR_CLASS_NOT_FOUND = 'Class "%s" does not exist and it definition cannot be registered with FireDI.';
-    const ERROR_CIRCULAR_DEPENDENCY = 'While trying to resolve class "%s", FireDI found that there was a cirular dependency caused by the class "%s".';
+    const ERROR_NOT_FOUND_IN_CONTAINER = '"%s" could not be resolved by FireDI.';
 
 }

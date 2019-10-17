@@ -14,7 +14,7 @@
 
 namespace UA1Labs\Fire\Di;
 
-use stdClass;
+use \stdClass;
 
 /**
  * This class makes it to easy to manage a dependency network
@@ -30,7 +30,7 @@ class Graph
      *
      * @var array<string>
      */
-    private $_resolved;
+    private $resolved;
 
     /**
      * This array is filled with dependencies that have yet to be resolved during
@@ -38,7 +38,7 @@ class Graph
      *
      * @var array<string>
      */
-    private $_unresolved;
+    private $unresolved;
 
     /**
      * This array contains a list of resources and dependencies and is modeled
@@ -46,7 +46,7 @@ class Graph
      *
      * @var array<string>
      */
-    private $_resourceGraph;
+    private $resourceGraph;
 
     /**
      * Contains an error code configuration for determining which
@@ -54,29 +54,28 @@ class Graph
      *
      * @var array<object>
      */
-    private $_errorCodes;
+    private $errorCodes;
 
     /**
      * The class constructor.
      */
     public function __construct()
     {
-        $this->_resolved = [];
-        $this->_unresolved = [];
-        $this->_resourceGraph = [];
-        $this->_dependencyError = false;
-        $this->_errorConfig();
+        $this->resolved = [];
+        $this->unresolved = [];
+        $this->resourceGraph = [];
+        $this->initErrorConfig();
     }
 
     /**
      * This method is used to add a resource to the dependecy graph.
      *
-     * @param string $resourse_id A unique ID that identifies a resource
-     * @return UA1Labs\Fire\Di\Graph
+     * @param string $resourseId A unique ID that identifies a resource
+     * @return \UA1Labs\Fire\Di\Graph
      */
-    public function addResource($resourse_id)
+    public function addResource($resourseId)
     {
-        $this->_resourceGraph[$resourse_id] = [];
+        $this->resourceGraph[$resourseId] = [];
         return $this;
     }
 
@@ -84,13 +83,13 @@ class Graph
      * This method is used to determine if a resourse exists within the
      * dependency graph.
      *
-     * @param string $resource The unique ID that identifies the resource you
+     * @param string $resourceId The unique ID that identifies the resource you
      *     are targeting.
      * @return boolean
      */
-    public function isResource($resource)
+    public function isResource($resourceId)
     {
-        return isset($this->_resourceGraph[$resource]);
+        return isset($this->resourceGraph[$resourceId]);
     }
 
     /**
@@ -100,11 +99,11 @@ class Graph
      *     want to add dependencies to.
      * @param array $dependencies An array that contains the dependencies you want
      *     to apply to the resource.
-     * @return UA1Labs\Fire\Di\Graph
+     * @return \UA1Labs\Fire\Di\Graph
      */
     public function addDependencies($resourceId, array $dependencies)
     {
-        $this->_resourceGraph[$resourceId] = array_merge($this->_resourceGraph[$resourceId], $dependencies);
+        $this->resourceGraph[$resourceId] = array_merge($this->resourceGraph[$resourceId], $dependencies);
         return $this;
     }
 
@@ -115,11 +114,11 @@ class Graph
      *    want to add dependency to.
      * @param string $dependency A var that contains the dependency you want
      *    to apply to the resource.
-     * @return UA1Labs\Fire\Di\Graph
+     * @return \UA1Labs\Fire\Di\Graph
      */
     public function addDependency($resourceId, $dependency)
     {
-        $this->_resourceGraph[$resourceId][] = $dependency;
+        $this->resourceGraph[$resourceId][] = $dependency;
         return $this;
     }
 
@@ -132,7 +131,7 @@ class Graph
      */
     public function getDependencies($resourceId)
     {
-        return $this->_resourceGraph[$resourceId];
+        return $this->resourceGraph[$resourceId];
     }
 
     /**
@@ -149,11 +148,11 @@ class Graph
      */
     public function runDependencyCheck($resourceId)
     {
-        if ($resourceExistsError = $this->_runResourceExistsCheck($resourceId)) {
+        if ($resourceExistsError = $this->runResourceExistsCheck($resourceId)) {
             return $resourceExistsError;
         }
 
-        if ($circularDepError = $this->_runCircularDependencyCheck($resourceId)) {
+        if ($circularDepError = $this->runCircularDependencyCheck($resourceId)) {
             return $circularDepError;
         }
     }
@@ -169,7 +168,7 @@ class Graph
      */
     public function getDependencyResolveOrder()
     {
-        $dependencies = $this->_resolved;
+        $dependencies = $this->resolved;
         array_pop($dependencies);
         return array_values($dependencies);
     }
@@ -177,21 +176,17 @@ class Graph
     /**
      * This method resets the status of all properies required to run another
      * dependency check.
-     *
-     * @return void
      */
     public function resetDependencyCheck()
     {
-        $this->_resolved = [];
-        $this->_unresolved = [];
+        $this->resolved = [];
+        $this->unresolved = [];
     }
 
     /**
      * This method is a helper method to set the default error config values.
-     *
-     * @return void
      */
-    private function _errorConfig()
+    private function initErrorConfig()
     {
         //error code config
         $error1 = (object) [
@@ -206,7 +201,7 @@ class Graph
             'description' => 'Circular Dependency Detected'
         ];
 
-        $this->_errorCodes = [
+        $this->errorCodes = [
             1 => $error1,
             2 => $error2
         ];
@@ -219,9 +214,9 @@ class Graph
      * @param $resourceId string The resourceId identified that caused the error.
      * @return object The error object that represents the runtime error.
      */
-    private function _getError($code, $resourceId = false)
+    private function getError($code, $resourceId = false)
     {
-        $error = $this->_errorCodes[$code];
+        $error = $this->errorCodes[$code];
         $error->resourceId = $resourceId;
         $this->resetDependencyCheck();
         return $error;
@@ -233,10 +228,10 @@ class Graph
      * @param resourceId The resourceId you would like to check.
      * @return object|void Void if resourceId is found. Error object if resource not found.
      */
-    private function _runResourceExistsCheck($resourceId)
+    private function runResourceExistsCheck($resourceId)
     {
         if (!$this->isResource($resourceId)) {
-            return $this->_getError(1, $resourceId);
+            return $this->getError(1, $resourceId);
         }
     }
 
@@ -247,13 +242,13 @@ class Graph
      * @param string The resource you would like to run the check for.
      * @return object|void Void if no error. Error object if it finds an error.
      */
-    private function _runCircularDependencyCheck($resourceId)
+    private function runCircularDependencyCheck($resourceId)
     {
-        $this->_unresolved[$resourceId] = $resourceId;
-        foreach ($this->_resourceGraph[$resourceId] as $dependency) {
-            if (!in_array($dependency, $this->_resolved)) {
-                if (in_array($dependency, $this->_unresolved)) {
-                    return $this->_getError(2, $resourceId);
+        $this->unresolved[$resourceId] = $resourceId;
+        foreach ($this->resourceGraph[$resourceId] as $dependency) {
+            if (!in_array($dependency, $this->resolved)) {
+                if (in_array($dependency, $this->unresolved)) {
+                    return $this->getError(2, $resourceId);
                 }
                 //return recursive error if any
                 if ($error = $this->runDependencyCheck($dependency)) {
@@ -261,7 +256,7 @@ class Graph
                 }
             }
         }
-        unset($this->_unresolved[$resourceId]);
-        $this->_resolved[$resourceId] = $resourceId;
+        unset($this->unresolved[$resourceId]);
+        $this->resolved[$resourceId] = $resourceId;
     }
 }
