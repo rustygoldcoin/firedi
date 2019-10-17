@@ -23,4 +23,6 @@ use \Psr\Container\NotFoundExceptionInterface;
 class NotFoundException extends Exception implements NotFoundExceptionInterface
 {
 
+    const ERROR_NOT_FOUND_IN_CONTAINER = '"%s" could not be resolved by FireDI.';
+
 }

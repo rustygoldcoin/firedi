@@ -28,8 +28,6 @@ use \Psr\Container\ContainerInterface;
 class Di implements ContainerInterface
 {
 
-    const ERROR_NOT_FOUND_IN_CONTAINER = '"%s" could not be resolved by FireDI.';
-
     /**
      * A map that stores all class definitions.
      *
@@ -100,7 +98,7 @@ class Di implements ContainerInterface
     public function get($classname)
     {
         if (!$this->has($classname)) {
-            $errorMessage = sprintf(self::ERROR_NOT_FOUND_IN_CONTAINER, $classname);
+            $errorMessage = sprintf(NotFoundException::ERROR_NOT_FOUND_IN_CONTAINER, $classname);
             throw new NotFoundException($errorMessage);
         }
         return $this->getCachedObject($classname);
