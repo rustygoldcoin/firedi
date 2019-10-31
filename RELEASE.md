@@ -1,4 +1,6 @@
 # Release Changes
+* 2.1.1
+    * Fixed issues with firebug version collision.
 * 2.1.0
     * Move firetest and firebug into require-dev in composer.json
     * Rename Di::put() to Di::set() and update the logic so that it will accept a closure to return the object.
