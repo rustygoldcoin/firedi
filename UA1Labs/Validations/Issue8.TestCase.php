@@ -21,9 +21,9 @@ use \UA1Labs\Fire\Di;
  * This test suite tests an issue found when a child of a child has a dependnecy that
  * cannot be resolved and the first child was already cached.
  *
- * @link https://github.com/ua1-labs/firesql/issues/3
+ * @link https://github.com/ua1-labs/firedi/issues/8
  */
-class Issue3TestCase extends TestCase
+class Issue8TestCase extends TestCase
 {
     /**
      * The FireDi
