@@ -276,13 +276,17 @@ class Di implements ContainerInterface
      */
     private function registerDependentClassDefinitions($classname)
     {
-        $classDefinition = $this->getClassDefinition($classname);
-        foreach ($classDefinition->dependencies as $dependency) {
-            if (!$this->isClassDefinitionRegistered($dependency)) {
-                $this->registerClassDefinition($dependency);
+        if (!$this->isObjectCached($classname)) {
+            $classDefinition = $this->getClassDefinition($classname);
+            foreach ($classDefinition->dependencies as $dependency) {
+                if (
+                    !$this->isClassDefinitionRegistered($dependency)
+                ) {
+                    $this->registerClassDefinition($dependency);
+                }
+                $this->circularDependencyErrorCheck($classname);
+                $this->registerDependentClassDefinitions($dependency);
             }
-            $this->circularDependencyErrorCheck($classname);
-            $this->registerDependentClassDefinitions($dependency);
         }
     }
 
