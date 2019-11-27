@@ -74,9 +74,6 @@ class TestClassB
 }
 
 class TestClassC
-{}
-
-class TestClassD
 {
     public function __construct($name)
     {}
